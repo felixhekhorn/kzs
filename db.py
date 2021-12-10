@@ -1,6 +1,6 @@
 import pathlib
 
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -14,18 +14,36 @@ class User(Base):
     name = Column(String)
     games = relationship("Game")
 
+
 class Game(Base):
     __tablename__ = "games"
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
     slug = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
+    user_id = Column(Integer, ForeignKey("users.id"))
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+
+class Player(Base):
+    __tablename__ = "players"
+
+    id = Column(Integer, primary_key=True)
+    position = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    game_id = Column(Integer, ForeignKey("games.id"))
+
+
+class Entry(Base):
+    __tablename__ = "entries"
+
+    id = Column(Integer, primary_key=True)
+    position = Column(Integer)
+    body = Column(Text)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    game_id = Column(Integer, ForeignKey("games.id"))
 
 
 # thanks banana!
@@ -54,10 +72,3 @@ def engine(
         path = "/" + str(pathlib.Path(path).absolute())
 
     return create_engine(f"{infrastructure}://{login}{address}{path}")
-
-
-# thanks banana!
-def create_db(base_cls, engine):
-    # Create all tables in the engine. This is equivalent to "Create Table"
-    # statements in raw SQL.
-    base_cls.metadata.create_all(engine)

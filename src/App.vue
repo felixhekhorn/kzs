@@ -4,14 +4,17 @@
     data: function () {
       return {
         connection: null,
+        user_id: 1,
         has_server: false,
-        games: [],
+        myGames: [],
+        myParticipations: [],
       }
     },
     methods: {
       loadGames: function () {
         this.send({
-          "type": "loadGames"
+          "type": "loadGames",
+          "user_id": this.user_id
         });
       },
       send: function (data) {
@@ -19,7 +22,8 @@
       },
       parse: function (res) {
         if (res.type == "loadedGames") {
-          this.games = res.games;
+          this.myGames = res.myGames;
+          this.myParticipations = res.myParticipations;
         }
       },
     },
@@ -43,8 +47,14 @@
 
 <template>
   <div v-if="has_server">
+    Spieler: <input type="number" v-model="user_id" />
     <button @click="loadGames()">Spiele laden</button>
-    <ul v-for="game in games" :key="game.id">
+    <div>Als Spielleiter</div>
+    <ul v-for="game in myGames" :key="game.id">
+      <li>{{game.title}}</li>
+    </ul>
+    <div>Als Teilnehmer</div>
+    <ul v-for="game in myParticipations" :key="game.id">
       <li>{{game.title}}</li>
     </ul>
   </div>

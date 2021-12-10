@@ -6,27 +6,59 @@ import signal
 import websockets
 from sqlalchemy.orm import sessionmaker
 
-from db import Base, Game, User, create_db, engine
+from db import Base, Game, Player, User, engine
 
 # open connection
 eng = engine("database.db")
-create_db(Base, eng)
 Session = sessionmaker(bind=eng)
 ses = Session()
 
 
-async def handler(websocket, path):
+class AppError(RuntimeError):
+    pass
+
+
+CONNECTIONS = {}
+
+
+def parse(websocket, msg):
+    if msg["type"] == "loadGames":
+        user_id = msg["user_id"]
+        # register user
+        CONNECTIONS[user_id] = websocket
+        # as host
+        myGames = ses.query(Game).filter(Game.user_id == user_id).all()
+        # as player
+        myParticipations = (
+            ses.query(Game, Player)
+            .filter(
+                Game.user_id == Player.game_id,
+                Player.user_id == user_id,
+                Game.user_id != user_id,
+            )
+            .all()
+        )
+        myParticipations = [e[0] for e in myParticipations]
+        return {
+            "type": "loadedGames",
+            "myGames": [g.as_dict() for g in myGames],
+            "myParticipations": [g.as_dict() for g in myParticipations],
+        }
+    raise AppError("Unknown type!")
+
+
+async def handler(websocket, _path):
     async for message in websocket:
         print(f"< {message}")
-        msg = json.loads(message)
         response = None
-        if "type" in msg and msg["type"] == "loadGames":
-            response = {
-                "type": "loadedGames",
-                "games": [g.as_dict() for g in ses.query(Game).all()],
-            }
-        else:
-            response = {"type": "error"}
+        try:
+            msg = json.loads(message)
+            if "type" not in msg:
+                raise AppError("Invalid request")
+
+            response = parse(websocket, msg)
+        except (AppError, KeyError) as e:
+            response = {"type": "error", "body": e}
 
         await websocket.send(json.dumps(response))
         print(f"> {response}")
