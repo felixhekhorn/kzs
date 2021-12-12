@@ -1,4 +1,5 @@
 <script>
+  import ListGames from "./components/ListGames.vue"
   export default {
     name: 'App',
     data: function () {
@@ -27,6 +28,9 @@
         }
       },
     },
+    components: {
+      ListGames,
+    },
     created: function () {
       // Establish connection via WebSocket
       this.connection = new WebSocket("ws://localhost:8001");
@@ -49,14 +53,10 @@
   <div v-if="has_server">
     Spieler: <input type="number" v-model="user_id" />
     <button @click="loadGames()">Spiele laden</button>
-    <div>Als Spielleiter</div>
-    <ul v-for="game in myGames" :key="game.id">
-      <li>{{game.title}}</li>
-    </ul>
-    <div>Als Teilnehmer</div>
-    <ul v-for="game in myParticipations" :key="game.id">
-      <li>{{game.title}}</li>
-    </ul>
+    <h1>Als Spielleiter</h1>
+    <ListGames :games="myGames" />
+    <h1>Als Teilnehmer</h1>
+    <ListGames :games="myParticipations" />
   </div>
   <div v-else>
     WebSocket-Server nicht verfügbar!

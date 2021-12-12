@@ -4,13 +4,20 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+
+class MyBase:
+    id = Column(Integer, primary_key=True)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+Base = declarative_base(cls=MyBase)
 
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
     name = Column(String)
     games = relationship("Game")
 
@@ -18,28 +25,25 @@ class User(Base):
 class Game(Base):
     __tablename__ = "games"
 
-    id = Column(Integer, primary_key=True)
     title = Column(String)
     slug = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    players = relationship("Player")
+    entries = relationship("Entry")
 
 
 class Player(Base):
     __tablename__ = "players"
 
-    id = Column(Integer, primary_key=True)
     position = Column(Integer)
     user_id = Column(Integer, ForeignKey("users.id"))
     game_id = Column(Integer, ForeignKey("games.id"))
+    user = relationship("User")
 
 
 class Entry(Base):
     __tablename__ = "entries"
 
-    id = Column(Integer, primary_key=True)
     position = Column(Integer)
     body = Column(Text)
     user_id = Column(Integer, ForeignKey("users.id"))

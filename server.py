@@ -20,34 +20,60 @@ class AppError(RuntimeError):
 
 CONNECTIONS = {}
 
+def serializeGames(games):
+    """Prepare data for transfer."""
+    gs = []
+    for g in games:
+        gg = g.as_dict()
+        # add Players
+        ps = []
+        for p in g.players:
+            pp = p.as_dict()
+            pp["user"] = p.user.as_dict()
+            ps.append(pp)
+        gg["players"] = ps
+        # add Entries
+        es = []
+        for e in g.entries:
+            ee = e.as_dict()
+            es.append(ee)
+        gg["entries"] = es
+        gs.append(gg)
+    return gs
 
-def parse(websocket, msg):
-    if msg["type"] == "loadGames":
-        user_id = msg["user_id"]
-        # register user
-        CONNECTIONS[user_id] = websocket
-        # as host
-        myGames = ses.query(Game).filter(Game.user_id == user_id).all()
-        # as player
-        myParticipations = (
-            ses.query(Game, Player)
-            .filter(
-                Game.user_id == Player.game_id,
-                Player.user_id == user_id,
-                Game.user_id != user_id,
-            )
-            .all()
+async def loadGames(websocket, msg):
+    """Load all relevant games."""
+    user_id = msg["user_id"]
+    # register user
+    CONNECTIONS[user_id] = websocket
+    # as host
+    myGames = ses.query(Game).filter(Game.user_id == user_id).all()
+    # as player
+    myParticipations = (
+        ses.query(Game, Player)
+        .filter(
+            Game.user_id == Player.game_id,
+            Player.user_id == user_id,
+            Game.user_id != user_id,
         )
-        myParticipations = [e[0] for e in myParticipations]
-        return {
-            "type": "loadedGames",
-            "myGames": [g.as_dict() for g in myGames],
-            "myParticipations": [g.as_dict() for g in myParticipations],
-        }
+        .all()
+    )
+    myParticipations = [e[0] for e in myParticipations]
+    return {
+        "type": "loadedGames",
+        "myGames": serializeGames(myGames),
+        "myParticipations": serializeGames(myParticipations),
+    }
+
+async def parse(websocket, msg):
+    """Parse a single message."""
+    if msg["type"] == "loadGames":
+        return await loadGames(websocket, msg)
     raise AppError("Unknown type!")
 
 
 async def handler(websocket, _path):
+    """Handle the stream of messages."""
     async for message in websocket:
         print(f"< {message}")
         response = None
@@ -56,15 +82,17 @@ async def handler(websocket, _path):
             if "type" not in msg:
                 raise AppError("Invalid request")
 
-            response = parse(websocket, msg)
+            response = await parse(websocket, msg)
         except (AppError, KeyError) as e:
             response = {"type": "error", "body": e}
 
-        await websocket.send(json.dumps(response))
+        if (response):
+            await websocket.send(json.dumps(response))
         print(f"> {response}")
 
 
 async def main():
+    """Init main event loop on server."""
     # Set the stop condition when receiving SIGTERM.
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
