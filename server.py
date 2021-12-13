@@ -20,6 +20,7 @@ class AppError(RuntimeError):
 
 CONNECTIONS = {}
 
+
 def serializeGames(games):
     """Prepare data for transfer."""
     gs = []
@@ -36,10 +37,12 @@ def serializeGames(games):
         es = []
         for e in g.entries:
             ee = e.as_dict()
+            ee["user"] = e.user.as_dict()
             es.append(ee)
         gg["entries"] = es
         gs.append(gg)
     return gs
+
 
 async def loadGames(websocket, msg):
     """Load all relevant games."""
@@ -65,6 +68,7 @@ async def loadGames(websocket, msg):
         "myParticipations": serializeGames(myParticipations),
     }
 
+
 async def parse(websocket, msg):
     """Parse a single message."""
     if msg["type"] == "loadGames":
@@ -86,7 +90,7 @@ async def handler(websocket, _path):
         except (AppError, KeyError) as e:
             response = {"type": "error", "body": e}
 
-        if (response):
+        if response:
             await websocket.send(json.dumps(response))
         print(f"> {response}")
 

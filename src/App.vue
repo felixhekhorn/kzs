@@ -1,22 +1,35 @@
 <script>
-  import ListGames from "./components/ListGames.vue"
+  import GamesList from "./components/GamesList.vue";
+  import GameView from "./components/GameView.vue"
+
+  // https://github.com/AykutSarac/chatify
+
   export default {
-    name: 'App',
     data: function () {
       return {
         connection: null,
-        user_id: 1,
         has_server: false,
+        currentUser: {"id":1},
         myGames: [],
         myParticipations: [],
+        state: "listGames",
+        currentGame: null,
       }
     },
     methods: {
       loadGames: function () {
         this.send({
           "type": "loadGames",
-          "user_id": this.user_id
+          "user_id": this.currentUser.id
         });
+      },
+      listGames: function (){
+        this.state = "listGames";
+        this.currentGame = null;
+      },
+      openGame: function (game) {
+        this.state = "showGame";
+        this.currentGame = game;
       },
       send: function (data) {
         this.connection.send(JSON.stringify(data));
@@ -29,7 +42,8 @@
       },
     },
     components: {
-      ListGames,
+      GamesList,
+      GameView
     },
     created: function () {
       // Establish connection via WebSocket
@@ -51,12 +65,18 @@
 
 <template>
   <div v-if="has_server">
-    Spieler: <input type="number" v-model="user_id" />
-    <button @click="loadGames()">Spiele laden</button>
-    <h1>Als Spielleiter</h1>
-    <ListGames :games="myGames" />
-    <h1>Als Teilnehmer</h1>
-    <ListGames :games="myParticipations" />
+    Spieler: <input type="number" v-model="currentUser.id" />
+    <div v-if="state == 'listGames'">
+      <button @click="loadGames()">Spiele laden</button>
+      <h1>Als Spielleiter</h1>
+      <GamesList @open-game="openGame" :games="myGames" />
+      <h1>Als Teilnehmer</h1>
+      <GamesList @open-game="openGame" :games="myParticipations" />
+    </div>
+    <div v-else-if="state == 'showGame'" >
+      <button @click="listGames()" >Zurück</button>
+      <GameView :game="currentGame" />
+    </div>
   </div>
   <div v-else>
     WebSocket-Server nicht verfügbar!

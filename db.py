@@ -48,6 +48,7 @@ class Entry(Base):
     body = Column(Text)
     user_id = Column(Integer, ForeignKey("users.id"))
     game_id = Column(Integer, ForeignKey("games.id"))
+    user = relationship("User")
 
 
 # thanks banana!

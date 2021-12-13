@@ -25,9 +25,15 @@ ses.add_all(
     [
         Player(id=1, position=1, user_id=1, game_id=1),
         Player(id=2, position=2, user_id=2, game_id=1),
+        Player(id=3, position=3, user_id=3, game_id=1),
     ]
 )
-ses.add_all([Entry(id=1, position=1, body="bla", user_id=1, game_id=1)])
+ses.add_all(
+    [
+        Entry(id=1, position=1, body="bla", user_id=1, game_id=1),
+        Entry(id=2, position=2, body="blabla", user_id=2, game_id=1),
+    ]
+)
 ses.commit()
 
 # check
