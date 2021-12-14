@@ -9,7 +9,10 @@
       return {
         connection: null,
         has_server: false,
-        currentUser: {"id":1},
+        currentError: "",
+        currentUser: {
+          "id": 1
+        },
         myGames: [],
         myParticipations: [],
         state: "listGames",
@@ -23,7 +26,7 @@
           "user_id": this.currentUser.id
         });
       },
-      listGames: function (){
+      listGames: function () {
         this.state = "listGames";
         this.currentGame = null;
       },
@@ -31,13 +34,27 @@
         this.state = "showGame";
         this.currentGame = game;
       },
+      addEntry: function (game_id, msg) {
+        this.send({
+          "type": "addEntry",
+          "user_id": this.currentUser.id,
+          "game_id": game_id,
+          "body": msg
+        })
+      },
       send: function (data) {
         this.connection.send(JSON.stringify(data));
       },
       parse: function (res) {
+        this.currentError = ""
+        if (res.type == "error") {
+          this.currentError = res.body;
+          return;
+        }
         if (res.type == "loadedGames") {
           this.myGames = res.myGames;
           this.myParticipations = res.myParticipations;
+          return;
         }
       },
     },
@@ -66,6 +83,7 @@
 <template>
   <div v-if="has_server">
     Spieler: <input type="number" v-model="currentUser.id" />
+    <div v-if="currentError">{{currentError}}</div>
     <div v-if="state == 'listGames'">
       <button @click="loadGames()">Spiele laden</button>
       <h1>Als Spielleiter</h1>
@@ -73,9 +91,9 @@
       <h1>Als Teilnehmer</h1>
       <GamesList @open-game="openGame" :games="myParticipations" />
     </div>
-    <div v-else-if="state == 'showGame'" >
-      <button @click="listGames()" >Zurück</button>
-      <GameView :game="currentGame" />
+    <div v-else-if="state == 'showGame'">
+      <button @click="listGames()">Zurück</button>
+      <GameView @add-entry="addEntry" :game="currentGame" />
     </div>
   </div>
   <div v-else>
