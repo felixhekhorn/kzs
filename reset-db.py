@@ -20,25 +20,28 @@ ses.add_all(
         User(id=3, name="C"),
     ]
 )
-ses.add_all([Game(id=1, title="Test", user_id=1, slug="gA1")])
 ses.add_all(
     [
+        Game(id=1, title="A1", user_id=1, slug="gA1"),
+        Game(id=2, title="B1", user_id=2, slug="gB1"),
+    ]
+)
+ses.add_all(
+    [
+        # gA1
         Player(id=1, position=1, user_id=1, game_id=1),
         Player(id=2, position=2, user_id=2, game_id=1),
         Player(id=3, position=3, user_id=3, game_id=1),
+        # gB1
+        Player(id=2, position=1, user_id=2, game_id=2),
+        Player(id=1, position=2, user_id=1, game_id=2),
+        Player(id=3, position=3, user_id=3, game_id=2),
     ]
 )
 ses.add_all(
     [
-        Entry(id=1, position=1, body="bla", user_id=1, game_id=1),
-        Entry(id=2, position=2, body="blabla", user_id=2, game_id=1),
+        Entry(id=1, body="bla", user_id=1, game_id=1),
+        Entry(id=2, body="blabla", user_id=2, game_id=1),
     ]
 )
 ses.commit()
-
-# check
-rs = ses.query(User).all()
-for u in rs:
-    print(u.name)
-    for g in u.games:
-        print("\t", g.title)

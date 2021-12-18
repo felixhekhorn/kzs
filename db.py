@@ -44,7 +44,6 @@ class Player(Base):
 class Entry(Base):
     __tablename__ = "entries"
 
-    position = Column(Integer)
     body = Column(Text)
     user_id = Column(Integer, ForeignKey("users.id"))
     game_id = Column(Integer, ForeignKey("games.id"))

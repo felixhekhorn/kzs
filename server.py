@@ -56,24 +56,6 @@ async def loadGames(websocket, msg):
         "games": serializeGames(games),
         "users": {u.id: u.as_dict() for u in users},
     }
-    # # as host
-    # myGames = ses.query(Game).filter(Game.user_id == user_id).all()
-    # # as player
-    # myParticipations = (
-    #     ses.query(Game, Player)
-    #     .filter(
-    #         Game.user_id == Player.game_id,
-    #         Player.user_id == user_id,
-    #         Game.user_id != user_id,
-    #     )
-    #     .all()
-    # )
-    # myParticipations = [e[0] for e in myParticipations]
-    # return {
-    #     "type": "loadedGames",
-    #     "myGames": serializeGames(myGames),
-    #     "myParticipations": serializeGames(myParticipations),
-    # }
 
 
 async def addEntry(websocket, msg):
@@ -94,7 +76,13 @@ async def addEntry(websocket, msg):
     ses.add(e)
     ses.commit()
     ses.refresh(e)
-    return {"type": "addEntry", "Entry": e.as_dict()}
+    response = {"type": "addEntry", "Entry": e.as_dict()}
+    for player in game.players:
+        if player.user_id == user_id:
+            continue  # I'm via return
+        if player.user_id in CONNECTIONS:
+            await CONNECTIONS[player.user_id].send(json.dumps(response))
+    return response
 
 
 async def parse(websocket, msg):
@@ -109,7 +97,7 @@ async def parse(websocket, msg):
 async def handler(websocket, _path):
     """Handle the stream of messages."""
     async for message in websocket:
-        print(f"< {message}")
+        # print(f"< {message}")
         response = None
         try:
             msg = json.loads(message)
@@ -122,7 +110,7 @@ async def handler(websocket, _path):
 
         if response:
             await websocket.send(json.dumps(response))
-        print(f"> {response}")
+        # print(f"> {response}")
 
 
 async def main():

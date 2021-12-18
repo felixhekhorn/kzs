@@ -8,7 +8,7 @@
       </div>
       <div class="players">
         Mitspieler:
-        <span v-for="player in game.players" :key="player.id" class="Player">{{player.user.name}}</span>
+        <span v-for="player in game.players" :key="player.id" class="Player">{{users[player.user_id].name}}</span>
       </div>
     </div>
   </div>
@@ -18,7 +18,8 @@
   export default {
     emits: ['openGame'],
     props: {
-      games: Array,
+      games: Object,
+      users: Object,
     }
   }
 </script>

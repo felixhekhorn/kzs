@@ -13,19 +13,13 @@
         currentUser: {
           "id": 1
         },
-        myGames: [],
-        myParticipations: [],
+        games: {},
+        users: {},
         state: "listGames",
         currentGame: null,
       }
     },
     methods: {
-      loadGames: function () {
-        this.send({
-          "type": "loadGames",
-          "user_id": this.currentUser.id
-        });
-      },
       listGames: function () {
         this.state = "listGames";
         this.currentGame = null;
@@ -34,6 +28,22 @@
         this.state = "showGame";
         this.currentGame = game;
       },
+      loadGames: function () {
+        this.send({
+          "type": "loadGames",
+          "user_id": this.currentUser.id
+        });
+      },
+      setGames: function (res) {
+        this.games = {
+          ...this.games,
+          ...res.games
+        };
+        this.users = {
+          ...this.user,
+          ...res.users
+        };
+      },
       addEntry: function (game_id, msg) {
         this.send({
           "type": "addEntry",
@@ -41,6 +51,20 @@
           "game_id": game_id,
           "body": msg
         })
+      },
+      setEntry: function (res) {
+        const g = this.games[res.Entry.game_id];
+        g.entries.push(res.Entry);
+        const scrollBottom = () => {
+          if (this.state != "showGame" || this.currentGame.id != g.id)
+            return;
+          const es = document.getElementsByClassName('Entry');
+          if (es.length <= 0)
+            return;
+          const lastEntry = es[es.length - 1];
+          lastEntry.scrollIntoView();
+        };
+        scrollBottom();
       },
       send: function (data) {
         this.connection.send(JSON.stringify(data));
@@ -51,11 +75,10 @@
           this.currentError = res.body;
           return;
         }
-        if (res.type == "loadedGames") {
-          this.myGames = res.myGames;
-          this.myParticipations = res.myParticipations;
-          return;
-        }
+        if (res.type == "loadedGames")
+          return this.setGames(res);
+        if (res.type == "addEntry")
+          return this.setEntry(res);
       },
     },
     components: {
@@ -67,7 +90,7 @@
       this.connection = new WebSocket("ws://localhost:8001");
       // parse answer
       this.connection.addEventListener('message', (event) => {
-        console.log('Message from server: ', event.data);
+        //console.log('Message from server: ', event.data);
         const res = JSON.parse(event.data);
         if (res.type)
           this.parse(res);
@@ -86,14 +109,11 @@
     <div v-if="currentError">{{currentError}}</div>
     <div v-if="state == 'listGames'">
       <button @click="loadGames()">Spiele laden</button>
-      <h1>Als Spielleiter</h1>
-      <GamesList @open-game="openGame" :games="myGames" />
-      <h1>Als Teilnehmer</h1>
-      <GamesList @open-game="openGame" :games="myParticipations" />
+      <GamesList @open-game="openGame" :games="games" :users="users" />
     </div>
     <div v-else-if="state == 'showGame'">
       <button @click="listGames()">Zurück</button>
-      <GameView @add-entry="addEntry" :game="currentGame" />
+      <GameView @add-entry="addEntry" :game="currentGame" :users="users" />
     </div>
   </div>
   <div v-else>

@@ -1,13 +1,13 @@
 <template>
   <div class="GameView">
     <h1>{{game.title}}</h1>
-    <div>
-      <div v-for="entry in game.entries" :key="entry.id">
-        <span>{{entry.user.name}}</span>
+    <div class="entries" >
+      <div v-for="entry in game.entries" :key="entry.id" class="Entry" >
+        <span>{{users[entry.user_id].name}}</span>
         <p>{{entry.body}}</p>
       </div>
       <div>
-        <textarea v-model="message"></textarea>
+        <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:" ></textarea>
         <button @click="addEntry">Senden</button>
       </div>
     </div>
@@ -19,17 +19,19 @@
     emits: ["addEntry"],
     data() {
       return {
-        message: "Bla"
+        message: ""
       }
     },
     props: {
       game: Object,
+      users: Object,
     },
     methods: {
       addEntry() {
-        this.message = this.message.trim()
+        this.message = this.message.trim();
         if (this.message)
           this.$emit('addEntry', this.game.id, this.message);
+        this.message = "";
       }
     }
   }
