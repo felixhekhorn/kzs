@@ -55,6 +55,7 @@
       setEntry: function (res) {
         const g = this.games[res.Entry.game_id];
         g.entries.push(res.Entry);
+        g.next_player_user_id = res.next_player_user_id;
         const scrollBottom = () => {
           if (this.state != "showGame" || this.currentGame.id != g.id)
             return;
@@ -90,7 +91,7 @@
       this.connection = new WebSocket("ws://localhost:8001");
       // parse answer
       this.connection.addEventListener('message', (event) => {
-        //console.log('Message from server: ', event.data);
+        console.log('Message from server: ', event.data);
         const res = JSON.parse(event.data);
         if (res.type)
           this.parse(res);
@@ -113,7 +114,7 @@
     </div>
     <div v-else-if="state == 'showGame'">
       <button @click="listGames()">Zurück</button>
-      <GameView @add-entry="addEntry" :game="currentGame" :users="users" />
+      <GameView @add-entry="addEntry" :game="currentGame" :users="users" :user="currentUser" />
     </div>
   </div>
   <div v-else>

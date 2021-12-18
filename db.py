@@ -31,6 +31,18 @@ class Game(Base):
     players = relationship("Player")
     entries = relationship("Entry")
 
+    def nextPlayer(self):
+        if len(self.entries) == 0:
+            return self.players[0]
+        le = self.entries[-1]
+        lp = next(filter(lambda p: p.user_id == le.user_id, self.players))
+        next_pos = (lp.position + 1) % len(self.players)
+        print(lp.user_id, lp.position)
+        print(next_pos)
+        np = next(filter(lambda p: p.position == next_pos, self.players))
+        print(np.user_id, np.position)
+        return np
+
 
 class Player(Base):
     __tablename__ = "players"

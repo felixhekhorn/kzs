@@ -29,6 +29,7 @@ def serializeGames(games):
         # add Players + Entries
         gg["players"] = [p.as_dict() for p in g.players]
         gg["entries"] = [e.as_dict() for e in g.entries]
+        gg["next_player_user_id"] = g.nextPlayer().user_id
         gs[g.id] = gg
     return gs
 
@@ -71,12 +72,16 @@ async def addEntry(websocket, msg):
     game = ses.query(Game).filter(Game.id == game_id).first()
     if not game:
         raise AppError("Game not found")
-    new_pos = 1 + len(game.entries)
-    e = Entry(user_id=user_id, game_id=game_id, body=msg["body"], position=new_pos)
+    e = Entry(user_id=user_id, game_id=game_id, body=msg["body"])
     ses.add(e)
     ses.commit()
     ses.refresh(e)
-    response = {"type": "addEntry", "Entry": e.as_dict()}
+    # reply with new entry
+    response = {
+        "type": "addEntry",
+        "Entry": e.as_dict(),
+        "next_player_user_id": game.nextPlayer().user_id,
+    }
     for player in game.players:
         if player.user_id == user_id:
             continue  # I'm via return
