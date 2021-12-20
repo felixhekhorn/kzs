@@ -91,7 +91,7 @@
       this.connection = new WebSocket("ws://localhost:8001");
       // parse answer
       this.connection.addEventListener('message', (event) => {
-        console.log('Message from server: ', event.data);
+        //console.log('Message from server: ', event.data);
         const res = JSON.parse(event.data);
         if (res.type)
           this.parse(res);

@@ -1,26 +1,23 @@
 <template>
   <div class="GamesList">
     <div v-for="game in games" :key="game.id">
-      <div>
-        <h2 class="title">{{game.title}}</h2>
-        <span class="numEntries">{{game.entries.length}} Beiträge</span>
-        <button @click="$emit('openGame', game)">Öffnen</button>
-      </div>
-      <div class="players">
-        Mitspieler:
-        <span v-for="player in game.players" :key="player.id" class="Player">{{users[player.user_id].name}}</span>
-      </div>
+      <GamesListItem :game="game" :users="users" />
     </div>
   </div>
 </template>
 
 <script>
+  import GamesListItem from "./GamesListItem.vue";
+
   export default {
     emits: ['openGame'],
     props: {
       games: Object,
       users: Object,
-    }
+    },
+    components: {
+      GamesListItem,
+    },
   }
 </script>
 
