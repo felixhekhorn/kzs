@@ -12,24 +12,29 @@
 </template>
 
 <script>
+  import {
+    mapState
+  } from 'vuex';
+
   import dayjs from 'dayjs';
   import 'dayjs/locale/de';
   dayjs.locale('de');
 
   export default {
-    emits: ['openGame'],
     props: {
       game: Object,
-      users: Object,
     },
     computed: {
       gameCTime() {
         return dayjs(this.game.ctime)
-      }
+      },
+      ...mapState([
+        "users"
+      ])
     },
     methods: {
       onOpenGame() {
-        this.$parent.$emit('openGame', this.game)
+        this.$store.commit("openGame", this.game);
       }
     }
   }

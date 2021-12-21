@@ -1,4 +1,7 @@
 <script>
+  import {
+    mapState
+  } from 'vuex'
   import GamesList from "./components/GamesList.vue";
   import GameView from "./components/GameView.vue"
 
@@ -7,19 +10,40 @@
   export default {
     data: function () {
       return {
-        connection: null,
-        has_server: false,
-        currentError: "",
-        currentUser: {
-          "id": 1
+        /*
+                connection: null,
+                has_server: false,
+                currentError: "",
+                currentUser: {
+                  "id": 1
+                },
+                games: {},
+                users: {},
+                state: "listGames",
+                currentGame: null,*/
+      }
+    },
+    computed: {
+      ...mapState([
+        "has_server", "currentError", "state"
+      ]),
+      user_id: {
+        get () {
+          return this.$store.state.currentUser.id
         },
-        games: {},
-        users: {},
-        state: "listGames",
-        currentGame: null,
+        set (value) {
+          this.$store.commit('setUserId', value)
+        }
       }
     },
     methods: {
+      loadGames() {
+        this.$store.dispatch("loadGames");
+      },
+      listGames() {
+        this.$store.commit("listGames");
+      },
+      /*
       listGames: function () {
         this.state = "listGames";
         this.currentGame = null;
@@ -27,12 +51,6 @@
       openGame: function (game) {
         this.state = "showGame";
         this.currentGame = game;
-      },
-      loadGames: function () {
-        this.send({
-          "type": "loadGames",
-          "user_id": this.currentUser.id
-        });
       },
       setGames: function (res) {
         this.games = {
@@ -80,41 +98,43 @@
           return this.setGames(res);
         if (res.type == "addEntry")
           return this.setEntry(res);
-      },
+      },*/
     },
     components: {
       GamesList,
       GameView
     },
     created: function () {
-      // Establish connection via WebSocket
-      this.connection = new WebSocket("ws://localhost:8001");
-      // parse answer
-      this.connection.addEventListener('message', (event) => {
-        //console.log('Message from server: ', event.data);
-        const res = JSON.parse(event.data);
-        if (res.type)
-          this.parse(res);
-      });
-      // notify in browser
-      this.connection.addEventListener('open', () => {
-        this.has_server = true;
-      });
+      /*
+            // Establish connection via WebSocket
+            this.connection = new WebSocket("ws://localhost:8001");
+            // parse answer
+            this.connection.addEventListener('message', (event) => {
+              //console.log('Message from server: ', event.data);
+              const res = JSON.parse(event.data);
+              if (res.type)
+                this.parse(res);
+            });
+            // notify in browser
+            this.connection.addEventListener('open', () => {
+              this.has_server = true;
+            });*/
+      this.$store.dispatch("open");
     }
   }
 </script>
 
 <template>
   <div v-if="has_server">
-    Spieler: <input type="number" v-model="currentUser.id" />
+    Spieler: <input type="number" v-model="user_id" />
     <div v-if="currentError">{{currentError}}</div>
     <div v-if="state == 'listGames'">
       <button @click="loadGames()">Spiele laden</button>
-      <GamesList @open-game="openGame" :games="games" :users="users" />
+      <GamesList />
     </div>
     <div v-else-if="state == 'showGame'">
       <button @click="listGames()">Zurück</button>
-      <GameView @add-entry="addEntry" :game="currentGame" :users="users" :user="currentUser" />
+      <GameView />
     </div>
   </div>
   <div v-else>
