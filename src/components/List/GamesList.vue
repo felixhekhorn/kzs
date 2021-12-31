@@ -1,5 +1,6 @@
 <template>
   <AddGame />
+  {{hasGames}}
   <div v-if="games" class="GamesList">
     <div v-for="game in games" :key="game.id">
       <div class="players">
@@ -17,14 +18,17 @@
     mapState
   } from 'vuex';
   import ListItem from "./ListItem.vue";
-  import AddGame from "./AddGame.vue"
+  import AddGame from "./AddGame.vue";
 
   export default {
     props: {},
     computed: {
       ...mapState([
         "games"
-      ])
+      ]),
+      hasGames() {
+        return true;
+      }
     },
     components: {
       ListItem,

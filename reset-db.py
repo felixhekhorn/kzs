@@ -23,9 +23,10 @@ ses.add_all(
 )
 ses.add_all(
     [
-        Game(id=1, title="running A1", user_id=1, slug="gA1", state="running"),
-        Game(id=2, title="init B1", user_id=2, slug="gB1", state="init"),
-        Game(id=3, title="finished C1", user_id=3, slug="gC1", state="finished"),
+        Game(id=1, title="A1 running", user_id=1, slug="gA1", state="running"),
+        Game(id=2, title="B1 init", user_id=2, slug="gB1", state="init"),
+        Game(id=3, title="C1 finished", user_id=3, slug="gC1", state="finished"),
+        Game(id=4, title="A2 init", user_id=1, slug="gA2", state="init"),
     ]
 )
 ses.add_all(
@@ -42,6 +43,9 @@ ses.add_all(
         Player(id=7, position=0, user_id=3, game_id=3),
         Player(id=8, position=1, user_id=1, game_id=3),
         Player(id=9, position=2, user_id=2, game_id=3),
+        # gA2
+        Player(id=10, position=0, user_id=1, game_id=4),
+        Player(id=11, position=1, user_id=2, game_id=4),
     ]
 )
 ses.add_all(

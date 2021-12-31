@@ -39,7 +39,7 @@ export default createStore({
                 ...res.games
             };
             state.users = {
-                ...state.user,
+                ...state.users,
                 ...res.users
             };
         },
@@ -93,7 +93,7 @@ export default createStore({
             commit("setError", "");
             if (res.type == "error")
                 return commit("setError", res.body);
-            if (res.type == "loadedGames")
+            if (res.type == "loadedGames" || res.type == "joinedGame" || res.type == "newGame")
                 return commit("setGames", res);
             if (res.type == "addEntry")
                 return commit("setEntry", res);
@@ -134,6 +134,26 @@ export default createStore({
                 "type": "startGame",
                 "user_id": state.currentUser.id,
                 "game_id": game.id,
+            })
+        },
+        async joinGame({
+            state,
+            dispatch
+        }, slug) {
+            return dispatch("send", {
+                "type": "joinGame",
+                "user_id": state.currentUser.id,
+                "game_slug": slug,
+            })
+        },
+        async newGame({
+            state,
+            dispatch
+        }, title) {
+            return dispatch("send", {
+                "type": "newGame",
+                "user_id": state.currentUser.id,
+                "game_title": title,
             })
         },
     },

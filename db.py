@@ -1,9 +1,18 @@
 import pathlib
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, create_engine, DateTime
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    create_engine,
+    DateTime,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+
 
 class MyBase:
     id = Column(Integer, primary_key=True)
@@ -47,6 +56,21 @@ class Game(Base):
         next_pos = (lp.position + 1) % len(self.players)
         np = next(filter(lambda p: p.position == next_pos, self.players))
         return np
+
+    def serialize_json(self):
+        """ "Returns JSON representation."""
+        gg = self.as_dict()
+        # add Players + Entries
+        gg["players"] = [p.as_dict() for p in self.players]
+        gg["entries"] = [e.as_dict() for e in self.entries]
+        gg["next_player_user_id"] = self.nextPlayer().user_id
+        return gg
+
+    def collect_users(self, users):
+        """Add all active Users to the map."""
+        for p in self.players:
+            if p.user.id not in users:
+                users[p.user.id] = p.user
 
 
 class Player(Base):

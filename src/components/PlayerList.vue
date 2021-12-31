@@ -1,7 +1,7 @@
 <template>
     Mitspieler:
     <span v-for="player in game.players" :key="player.id"
-      :class="['Player', game.next_player_user_id == player.user_id ? 'Active' : '']">{{users[player.user_id].name}}</span>
+      :class="playerClasses[player.id]">{{users[player.user_id].name}}</span>
 </template>
 
 <script>
@@ -16,7 +16,17 @@
     computed: {
       ...mapState([
         "users"
-      ])
+      ]),
+      playerClasses(){
+        let classes = {};
+        this.game.players.forEach(p => {
+          let cls = ['Player'];
+          if (this.game.state != "finished" && this.game.next_player_user_id == p.user_id)
+            cls = [...cls, 'ActivePlayer'];
+          classes[p.id] = cls;
+        });
+        return classes;
+      }
     },
     methods: {
     }
@@ -28,7 +38,7 @@
     content: ", "
   }
 
-  .Player.Active {
+  .Player.ActivePlayer {
     font-weight: bold;
   }
 </style>
