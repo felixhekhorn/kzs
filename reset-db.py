@@ -18,12 +18,14 @@ ses.add_all(
         User(id=1, name="A"),
         User(id=2, name="B"),
         User(id=3, name="C"),
+        User(id=4, name="D"),
     ]
 )
 ses.add_all(
     [
-        Game(id=1, title="A1", user_id=1, slug="gA1"),
-        Game(id=2, title="B1", user_id=2, slug="gB1"),
+        Game(id=1, title="running A1", user_id=1, slug="gA1", state="running"),
+        Game(id=2, title="init B1", user_id=2, slug="gB1", state="init"),
+        Game(id=3, title="finished C1", user_id=3, slug="gC1", state="finished"),
     ]
 )
 ses.add_all(
@@ -36,12 +38,20 @@ ses.add_all(
         Player(id=4, position=0, user_id=2, game_id=2),
         Player(id=5, position=1, user_id=1, game_id=2),
         Player(id=6, position=2, user_id=3, game_id=2),
+        # gC1
+        Player(id=7, position=0, user_id=3, game_id=3),
+        Player(id=8, position=1, user_id=1, game_id=3),
+        Player(id=9, position=2, user_id=2, game_id=3),
     ]
 )
 ses.add_all(
     [
+        # gA1
         Entry(id=1, body="bla", user_id=1, game_id=1),
         Entry(id=2, body="blabla", user_id=2, game_id=1),
+        # gC1
+        Entry(id=3, body="this is", user_id=3, game_id=3),
+        Entry(id=4, body="the end", user_id=1, game_id=3),
     ]
 )
 ses.commit()

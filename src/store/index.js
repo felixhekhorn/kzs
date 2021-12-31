@@ -52,6 +52,9 @@ export default createStore({
             state.state = "listGames";
             state.currentGame = null;
         },
+        startedGame(state, res) {
+            state.games[res.game_id].state = "running";
+        },
         openGame(state, game) {
             state.state = "showGame";
             state.currentGame = game;
@@ -84,6 +87,7 @@ export default createStore({
             commit("setConnection", ws);
         },
         parse({
+            state,
             commit
         }, res) {
             commit("setError", "");
@@ -93,6 +97,14 @@ export default createStore({
                 return commit("setGames", res);
             if (res.type == "addEntry")
                 return commit("setEntry", res);
+            if (res.type == "startedGame") {
+                commit("startedGame", res);
+                // open immediately for me, since I'm first
+                const g = state.games[res.game_id];
+                if (state.currentUser.id == g.user_id)
+                    commit("openGame", g)
+                return
+            }
         },
         async loadGames({
             state,
@@ -112,6 +124,16 @@ export default createStore({
                 "user_id": state.currentUser.id,
                 "game_id": state.currentGame.id,
                 "body": msg
+            })
+        },
+        async startGame({
+            state,
+            dispatch
+        }, game) {
+            return dispatch("send", {
+                "type": "startGame",
+                "user_id": state.currentUser.id,
+                "game_id": game.id,
             })
         },
     },

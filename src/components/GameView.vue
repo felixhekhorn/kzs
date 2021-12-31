@@ -1,12 +1,12 @@
 <template>
   <div class="GameView">
     <h1>{{game.title}}</h1>
+    <div class="players" ><PlayerList :game="game" /></div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
-        <span>{{users[entry.user_id].name}}</span>
-        <p :style="entryBodyStyles[entry.id]">{{entry.body}}</p>
+        <GameViewEntry :entry="entry" :style="entryBodyStyles[entry.id]" />
       </div>
-      <div v-if="game.next_player_user_id == user.id">
+      <div v-if="game.next_player_user_id == user.id && game.state != 'finished'">
         <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:"></textarea>
         <button @click="addEntry">Senden</button>
       </div>
@@ -19,6 +19,9 @@
     mapState
   } from 'vuex';
 
+  import GameViewEntry from "./GameViewEntry.vue"
+  import PlayerList from "./PlayerList.vue"
+
   export default {
     data() {
       return {
@@ -29,20 +32,21 @@
     computed: {
       entryBodyStyles() {
         let styles = {};
+        // set default for most
         this.game.entries.forEach(e => {
           styles[e.id] = {
-            "display": "none"
+            "display": this.game.state == "finished" ? "visible" : "none"
           }
         });
-        // show last
-        if (this.game.entries.length > 0 && this.game.next_player_user_id == this.user.id) {
+        // show eventually last
+        if (this.game.entries.length > 0 && this.game.next_player_user_id == this.user.id && this.game.state !=
+          'finished') {
           const le = this.game.entries[this.game.entries.length - 1];
           styles[le.id].display = "visible";
         }
         return styles;
       },
       ...mapState({
-        users: "users",
         game: "currentGame",
         user: "currentUser"
       })
@@ -54,6 +58,10 @@
           this.$store.dispatch('addEntry', this.message);
         this.message = "";
       }
+    },
+    components: {
+      GameViewEntry,
+      PlayerList,
     }
   }
 </script>

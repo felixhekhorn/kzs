@@ -90,12 +90,37 @@ async def addEntry(websocket, msg):
     return response
 
 
+async def startGame(websocket, msg):
+    game_id = msg["game_id"]
+    user_id = msg["user_id"]
+    # check we're the owner part
+    game = ses.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise AppError("Game not found")
+    if game.user_id != user_id:
+        raise AppError(f"User {user_id} is does not own Game {game_id}")
+    game.state = "running"
+    ses.commit()
+    # reply with confirmation for everybody
+    response = {
+        "type": "startedGame",
+        "game_id": game.id,
+    }
+    for player in game.players:
+        if player.user_id == user_id:
+            continue  # I'm via return
+        if player.user_id in CONNECTIONS:
+            await CONNECTIONS[player.user_id].send(json.dumps(response))
+    return response
+
 async def parse(websocket, msg):
     """Parse a single message."""
     if msg["type"] == "loadGames":
         return await loadGames(websocket, msg)
     if msg["type"] == "addEntry":
         return await addEntry(websocket, msg)
+    if msg["type"] == "startGame":
+        return await startGame(websocket, msg)
     raise AppError("Unknown type!")
 
 

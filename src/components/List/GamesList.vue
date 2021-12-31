@@ -1,8 +1,14 @@
 <template>
-  <div class="GamesList">
+  <AddGame />
+  <div v-if="games" class="GamesList">
     <div v-for="game in games" :key="game.id">
-      <GamesListItem :game="game" />
+      <div class="players">
+        <ListItem :game="game" />
+      </div>
     </div>
+  </div>
+  <div v-else class="">
+    Keine Spiele gefunden.
   </div>
 </template>
 
@@ -10,7 +16,8 @@
   import {
     mapState
   } from 'vuex';
-  import GamesListItem from "./GamesListItem.vue";
+  import ListItem from "./ListItem.vue";
+  import AddGame from "./AddGame.vue"
 
   export default {
     props: {},
@@ -20,7 +27,8 @@
       ])
     },
     components: {
-      GamesListItem,
+      ListItem,
+      AddGame,
     },
   }
 </script>
@@ -28,9 +36,5 @@
 <style scoped>
   .GamesList {
     text-align: left;
-  }
-
-  .Player::after {
-    content: ", "
   }
 </style>

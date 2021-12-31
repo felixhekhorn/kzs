@@ -32,6 +32,7 @@ class Game(Base):
 
     title = Column(String)
     slug = Column(String)
+    state = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     ctime = Column(DateTime, server_default=func.now())
     players = relationship("Player")
