@@ -1,8 +1,8 @@
 <template>
-      <div class="Entry">
-        <span>{{users[entry.user_id].name}} um {{ctime.format("DD.MM.YY HH:mm")}}</span>
-        <p :style="style">{{entry.body}}</p>
-      </div>
+  <div class="Entry">
+    <span>{{users[entry.user_id].name}} um {{ctime.format("DD.MM.YY HH:mm")}}</span>
+    <p :style="style">{{entry.body}}</p>
+  </div>
 </template>
 
 <script>
@@ -27,8 +27,7 @@
         users: "users",
       })
     },
-    methods: {
-    }
+    methods: {}
   }
 </script>
 

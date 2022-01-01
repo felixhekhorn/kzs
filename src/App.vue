@@ -2,12 +2,7 @@
   <div v-if="has_server">
     Spieler: <input type="number" v-model="user_id" />
     <div v-if="currentError">{{currentError}}</div>
-    <div v-if="state == 'listGames'">
-      <ListView />
-    </div>
-    <div v-else-if="state == 'showGame'">
-      <GameView />
-    </div>
+    <component :is="currentComponent" />
   </div>
   <div v-else>
     WebSocket-Server nicht verfügbar!
@@ -24,21 +19,6 @@
   // https://github.com/AykutSarac/chatify
 
   export default {
-    data: function () {
-      return {
-        /*
-                connection: null,
-                has_server: false,
-                currentError: "",
-                currentUser: {
-                  "id": 1
-                },
-                games: {},
-                users: {},
-                state: "listGames",
-                currentGame: null,*/
-      }
-    },
     computed: {
       ...mapState([
         "has_server", "currentError", "state"
@@ -50,6 +30,11 @@
         set(value) {
           this.$store.commit('setUserId', value)
         }
+      },
+      currentComponent() {
+        if (this.state == "showGame")
+          return GameView;
+        return ListView;
       }
     },
     methods: {
@@ -59,10 +44,6 @@
       listGames() {
         this.$store.commit("listGames");
       },
-    },
-    components: {
-      ListView,
-      GameView
     },
     created: function () {
       this.$store.dispatch("open");

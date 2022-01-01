@@ -5,7 +5,8 @@
       {{ctime.format("DD.MM.YY HH:mm")}}</span>
     <button v-if="game.state != 'init'" @click="onOpenGame">Öffnen</button>
     <button v-if="canStart" @click="onStartGame">Starten</button>
-    <div><PlayerList :game="game" /> <span class="slug" >{{game.slug}}</span></div>
+    <div>
+      <PlayerList :game="game" /> <span class="slug">{{game.slug}}</span></div>
   </div>
 </template>
 
@@ -52,6 +53,7 @@
   .GamesList {
     text-align: left;
   }
+
   .slug {
     font-family: monospace;
   }

@@ -2,7 +2,9 @@
   <div class="GameView">
     <button @click="listGames()">Zurück</button>
     <h1>{{game.title}}</h1>
-    <div class="players" ><PlayerList :game="game" /></div>
+    <div class="players">
+      <PlayerList :game="game" />
+    </div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
         <EntryView :entry="entry" :style="entryBodyStyles[entry.id]" />

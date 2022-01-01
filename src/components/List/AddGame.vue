@@ -1,6 +1,6 @@
 <template>
   <div class="AddGame">
-    <div><input v-model="newTitle" placeholder="Spieletitel" ><button @click="onNewGame" >Neues Spiel</button></div>
+    <div><input v-model="newTitle" placeholder="Spieletitel"><button @click="onNewGame">Neues Spiel</button></div>
     <div><input v-model="joinSlug" placeholder="Spielkennung eingeben" /><button @click="onJoinGame">Spiel
         beitreten</button></div>
   </div>
@@ -18,7 +18,7 @@
     computed: {},
     components: {},
     methods: {
-      onNewGame(){
+      onNewGame() {
         this.newTitle = this.newTitle.trim();
         if (this.newTitle)
           this.$store.dispatch("newGame", this.newTitle);
