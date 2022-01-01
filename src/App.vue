@@ -1,9 +1,25 @@
+<template>
+  <div v-if="has_server">
+    Spieler: <input type="number" v-model="user_id" />
+    <div v-if="currentError">{{currentError}}</div>
+    <div v-if="state == 'listGames'">
+      <ListView />
+    </div>
+    <div v-else-if="state == 'showGame'">
+      <GameView />
+    </div>
+  </div>
+  <div v-else>
+    WebSocket-Server nicht verfügbar!
+  </div>
+</template>
+
 <script>
   import {
     mapState
   } from 'vuex'
-  import GamesList from "./components/List/GamesList.vue";
-  import GameView from "./components/GameView.vue"
+  import ListView from "./components/List/ListView.vue";
+  import GameView from "./components/Game/GameView.vue"
 
   // https://github.com/AykutSarac/chatify
 
@@ -28,10 +44,10 @@
         "has_server", "currentError", "state"
       ]),
       user_id: {
-        get () {
+        get() {
           return this.$store.state.currentUser.id
         },
-        set (value) {
+        set(value) {
           this.$store.commit('setUserId', value)
         }
       }
@@ -45,7 +61,7 @@
       },
     },
     components: {
-      GamesList,
+      ListView,
       GameView
     },
     created: function () {
@@ -53,24 +69,6 @@
     }
   }
 </script>
-
-<template>
-  <div v-if="has_server">
-    Spieler: <input type="number" v-model="user_id" />
-    <div v-if="currentError">{{currentError}}</div>
-    <div v-if="state == 'listGames'">
-      <button @click="loadGames()">Spiele laden</button>
-      <GamesList />
-    </div>
-    <div v-else-if="state == 'showGame'">
-      <button @click="listGames()">Zurück</button>
-      <GameView />
-    </div>
-  </div>
-  <div v-else>
-    WebSocket-Server nicht verfügbar!
-  </div>
-</template>
 
 <style>
   #app {

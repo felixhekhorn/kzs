@@ -1,10 +1,11 @@
 <template>
   <div class="GameView">
+    <button @click="listGames()">Zurück</button>
     <h1>{{game.title}}</h1>
     <div class="players" ><PlayerList :game="game" /></div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
-        <GameViewEntry :entry="entry" :style="entryBodyStyles[entry.id]" />
+        <EntryView :entry="entry" :style="entryBodyStyles[entry.id]" />
       </div>
       <div v-if="game.next_player_user_id == user.id && game.state != 'finished'">
         <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:"></textarea>
@@ -19,8 +20,8 @@
     mapState
   } from 'vuex';
 
-  import GameViewEntry from "./GameViewEntry.vue"
-  import PlayerList from "./PlayerList.vue"
+  import EntryView from "./EntryView.vue";
+  import PlayerList from "../PlayerList.vue";
 
   export default {
     data() {
@@ -28,7 +29,9 @@
         message: ""
       }
     },
-    props: {},
+    props: {
+      "id": String,
+    },
     computed: {
       entryBodyStyles() {
         let styles = {};
@@ -47,8 +50,8 @@
         return styles;
       },
       ...mapState({
+        user: "currentUser",
         game: "currentGame",
-        user: "currentUser"
       })
     },
     methods: {
@@ -57,10 +60,13 @@
         if (this.message)
           this.$store.dispatch('addEntry', this.message);
         this.message = "";
-      }
+      },
+      listGames() {
+        this.$store.commit("listGames");
+      },
     },
     components: {
-      GameViewEntry,
+      EntryView,
       PlayerList,
     }
   }

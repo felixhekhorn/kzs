@@ -1,10 +1,10 @@
 <template>
+  <div><button @click="loadGames()">Spiele laden</button></div>
   <AddGame />
-  {{hasGames}}
-  <div v-if="games" class="GamesList">
+  <div v-if="hasGames" class="GamesList">
     <div v-for="game in games" :key="game.id">
       <div class="players">
-        <ListItem :game="game" />
+        <GameView :game="game" />
       </div>
     </div>
   </div>
@@ -17,22 +17,29 @@
   import {
     mapState
   } from 'vuex';
-  import ListItem from "./ListItem.vue";
+  import GameView from "./GameView.vue";
   import AddGame from "./AddGame.vue";
+  import isObjectEmpty from "../../lib/isObjectEmpty.js"
 
   export default {
     props: {},
+    mixins: [isObjectEmpty],
     computed: {
       ...mapState([
         "games"
       ]),
       hasGames() {
-        return true;
+        return !this.isObjectEmpty(this.games);
       }
     },
     components: {
-      ListItem,
+      GameView,
       AddGame,
+    },
+    methods: {
+      loadGames() {
+        this.$store.dispatch("loadGames");
+      },
     },
   }
 </script>
