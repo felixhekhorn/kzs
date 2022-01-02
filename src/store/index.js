@@ -64,7 +64,7 @@ export default createStore({
         async send({
             state
         }, data) {
-            state.connection.send(JSON.stringify(data));
+            await state.connection.send(JSON.stringify(data));
         },
         async open({
             //state,
@@ -110,7 +110,7 @@ export default createStore({
             state,
             dispatch
         }) {
-            return dispatch("send", {
+            return await dispatch("send", {
                 "type": "loadGames",
                 "user_id": state.currentUser.id
             });
@@ -119,7 +119,7 @@ export default createStore({
             state,
             dispatch
         }, msg) {
-            return dispatch("send", {
+            return await dispatch("send", {
                 "type": "addEntry",
                 "user_id": state.currentUser.id,
                 "game_id": state.currentGame.id,
@@ -130,7 +130,7 @@ export default createStore({
             state,
             dispatch
         }, game) {
-            return dispatch("send", {
+            return await dispatch("send", {
                 "type": "startGame",
                 "user_id": state.currentUser.id,
                 "game_id": game.id,
@@ -140,7 +140,7 @@ export default createStore({
             state,
             dispatch
         }, slug) {
-            return dispatch("send", {
+            return await dispatch("send", {
                 "type": "joinGame",
                 "user_id": state.currentUser.id,
                 "game_slug": slug,
@@ -150,10 +150,19 @@ export default createStore({
             state,
             dispatch
         }, title) {
-            return dispatch("send", {
+            return await dispatch("send", {
                 "type": "newGame",
                 "user_id": state.currentUser.id,
                 "game_title": title,
+            })
+        },
+        async login({
+            dispatch
+        }, data) {
+            return await dispatch("send", {
+                "type": "login",
+                "user_name": data.user_name,
+                "user_password": data.user_password,
             })
         },
     },

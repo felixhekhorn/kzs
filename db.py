@@ -33,6 +33,7 @@ class User(Base):
     __tablename__ = "users"
 
     name = Column(String)
+    password = Column(String)
     games = relationship("Game")
 
 

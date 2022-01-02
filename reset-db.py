@@ -15,10 +15,10 @@ ses = Session()
 # add initial data
 ses.add_all(
     [
-        User(id=1, name="A"),
-        User(id=2, name="B"),
-        User(id=3, name="C"),
-        User(id=4, name="D"),
+        User(id=1, name="A", password="A"),
+        User(id=2, name="B", password="B"),
+        User(id=3, name="C", password="C"),
+        User(id=4, name="D", password="D"),
     ]
 )
 ses.add_all(

@@ -1,7 +1,7 @@
 <template>
   <div v-if="has_server">
     Spieler: <input type="number" v-model="user_id" />
-    <div v-if="currentError">{{currentError}}</div>
+    <ErrorView />
     <component :is="currentComponent" />
   </div>
   <div v-else>
@@ -13,7 +13,10 @@
   import {
     mapState
   } from 'vuex'
-  import ListView from "./components/List/ListView.vue";
+
+  import ErrorView from "./components/ErrorView.vue"
+  import LoginView from "./components/LoginView.vue"
+  import ListView from "./components/List/ListView.vue"
   import GameView from "./components/Game/GameView.vue"
 
   // https://github.com/AykutSarac/chatify
@@ -21,7 +24,7 @@
   export default {
     computed: {
       ...mapState([
-        "has_server", "currentError", "state"
+        "has_server", "state"
       ]),
       user_id: {
         get() {
@@ -34,19 +37,16 @@
       currentComponent() {
         if (this.state == "showGame")
           return GameView;
-        return ListView;
+        if (this.state == "listGames")
+          return ListView;
+        return LoginView;
       }
-    },
-    methods: {
-      loadGames() {
-        this.$store.dispatch("loadGames");
-      },
-      listGames() {
-        this.$store.commit("listGames");
-      },
     },
     created: function () {
       this.$store.dispatch("open");
+    },
+    components: {
+      ErrorView
     }
   }
 </script>
