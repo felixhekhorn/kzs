@@ -3,9 +3,7 @@
   <AddGame />
   <div v-if="hasGames" class="GamesList">
     <div v-for="game in games" :key="game.id">
-      <div class="players">
-        <GameView :game="game" />
-      </div>
+      <GameView :game="game" />
     </div>
   </div>
   <div v-else class="">

@@ -14,9 +14,6 @@
         joinSlug: ""
       }
     },
-    props: {},
-    computed: {},
-    components: {},
     methods: {
       onNewGame() {
         this.newTitle = this.newTitle.trim();

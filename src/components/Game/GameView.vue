@@ -1,14 +1,15 @@
 <template>
   <div class="GameView">
     <h1>{{game.title}}</h1>
-    <div class="players">
+    <div>
       <PlayerList :game="game" />
+      <button v-if="canEnd" @click="onEnd">Beenden</button>
     </div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
         <EntryView :entry="entry" :style="entryBodyStyles[entry.id]" />
       </div>
-      <div v-if="game.next_player_user_id == user.id && game.state != 'finished'">
+      <div v-if="canSend">
         <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:"></textarea>
         <button @click="addEntry">Senden</button>
       </div>
@@ -30,9 +31,6 @@
         message: ""
       }
     },
-    props: {
-      "id": String,
-    },
     computed: {
       entryBodyStyles() {
         let styles = {};
@@ -43,12 +41,17 @@
           }
         });
         // show eventually last
-        if (this.game.entries.length > 0 && this.game.next_player_user_id == this.user.id && this.game.state !=
-          'finished') {
+        if (this.game.entries.length > 0 && this.canSend) {
           const le = this.game.entries[this.game.entries.length - 1];
           styles[le.id].display = "visible";
         }
         return styles;
+      },
+      canSend() {
+        return this.game.next_player_user_id == this.user.id && this.game.state != "finished"
+      },
+      canEnd() {
+        return this.game.user_id == this.user.id && this.game.state == "running"
       },
       ...mapState({
         user: "currentUser",
@@ -59,8 +62,11 @@
       addEntry() {
         this.message = this.message.trim();
         if (this.message)
-          this.$store.dispatch('addEntry', this.message);
+          this.$store.dispatch("addEntry", this.message);
         this.message = "";
+      },
+      onEnd() {
+        this.$store.dispatch("endGame");
       },
     },
     components: {

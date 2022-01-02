@@ -109,11 +109,33 @@ class App:
             raise AppError(f"User {self.user_id} is does not own Game {game_id}!")
         if len(game.players) < 3:
             raise AppError(f"At least 3 players are required to play!")
+        if game.state != "init":
+            raise AppError(f"Game is not in init mode!")
         game.state = "running"
         ses.commit()
         # reply with confirmation for everybody
         response = {
             "type": "startedGame",
+            "game_id": game.id,
+        }
+        await self.tell_players(game, response)
+        return response
+
+    async def endGame(self):
+        game_id = self.msg["game_id"]
+        # check we're the owner part
+        game = ses.query(Game).filter(Game.id == game_id).first()
+        if not game:
+            raise AppError("Game not found!")
+        if game.user_id != self.user_id:
+            raise AppError(f"User {self.user_id} is does not own Game {game_id}!")
+        if game.state != "running":
+            raise AppError(f"Game is not running!")
+        game.state = "finished"
+        ses.commit()
+        # reply with confirmation for everybody
+        response = {
+            "type": "endedGame",
             "game_id": game.id,
         }
         await self.tell_players(game, response)
