@@ -57,9 +57,9 @@ export default createStore({
         endedGame(state, res) {
             state.games[res.game_id].state = "finished";
         },
-        openGame(state, game) {
+        openGame(state, game_id) {
             state.state = "showGame";
-            state.currentGame = game;
+            state.currentGameId = game_id;
         },
         logout(state) {
             state.state = "login";
@@ -147,18 +147,18 @@ export default createStore({
             return await dispatch("send", {
                 "type": "addEntry",
                 "user_id": state.currentUser.id,
-                "game_id": state.currentGame.id,
+                "game_id": state.currentGameId,
                 "body": msg
             })
         },
         async startGame({
             state,
             dispatch
-        }, game) {
+        }, game_id) {
             return await dispatch("send", {
                 "type": "startGame",
                 "user_id": state.currentUser.id,
-                "game_id": game.id,
+                "game_id": game_id,
             })
         },
         async endGame({
@@ -168,7 +168,7 @@ export default createStore({
             return await dispatch("send", {
                 "type": "endGame",
                 "user_id": state.currentUser.id,
-                "game_id": state.currentGame.id,
+                "game_id": state.currentGameId,
             })
         },
         async joinGame({

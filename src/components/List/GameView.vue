@@ -37,10 +37,10 @@
     },
     methods: {
       onOpenGame() {
-        this.$store.commit("openGame", this.game);
+        this.$store.commit("openGame", this.game.id);
       },
       onStartGame() {
-        this.$store.dispatch("startGame", this.game);
+        this.$store.dispatch("startGame", this.game.id);
       },
     },
     components: {

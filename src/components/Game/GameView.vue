@@ -20,10 +20,10 @@
 <script>
   import {
     mapState
-  } from 'vuex';
+  } from 'vuex'
 
-  import EntryView from "./EntryView.vue";
-  import PlayerList from "../PlayerList.vue";
+  import EntryView from "./EntryView.vue"
+  import PlayerList from "../PlayerList.vue"
 
   export default {
     data() {
@@ -48,15 +48,15 @@
         return styles;
       },
       canSend() {
-        return this.game.next_player_user_id == this.user.id && this.game.state != "finished"
+        return this.game.next_player_user_id == this.currentUser.id && this.game.state != "finished"
       },
       canEnd() {
-        return this.game.user_id == this.user.id && this.game.state == "running"
+        return this.game.user_id == this.currentUser.id && this.game.state == "running"
       },
-      ...mapState({
-        user: "currentUser",
-        game: "currentGame",
-      })
+      game() {
+        return this.games[this.currentGameId];
+      },
+      ...mapState(["currentUser", "currentGameId", "games"])
     },
     methods: {
       addEntry() {
