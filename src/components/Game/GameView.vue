@@ -1,6 +1,5 @@
 <template>
   <div class="GameView">
-    <button @click="listGames()">Zurück</button>
     <h1>{{game.title}}</h1>
     <div class="players">
       <PlayerList :game="game" />
@@ -62,9 +61,6 @@
         if (this.message)
           this.$store.dispatch('addEntry', this.message);
         this.message = "";
-      },
-      listGames() {
-        this.$store.commit("listGames");
       },
     },
     components: {

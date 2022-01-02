@@ -20,6 +20,8 @@ class MyBase:
     def as_dict(self):
         d = {}
         for c in self.__table__.columns:
+            if c.name == "password":
+                continue
             d[c.name] = getattr(self, c.name)
             if c.name == "ctime":
                 d[c.name] = d[c.name].isoformat()

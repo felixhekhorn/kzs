@@ -1,6 +1,6 @@
 <template>
   <div v-if="has_server">
-    Spieler: <input type="number" v-model="user_id" />
+    <HeaderView />
     <ErrorView />
     <component :is="currentComponent" />
   </div>
@@ -14,6 +14,7 @@
     mapState
   } from 'vuex'
 
+  import HeaderView from "./components/HeaderView.vue"
   import ErrorView from "./components/ErrorView.vue"
   import LoginView from "./components/LoginView.vue"
   import ListView from "./components/List/ListView.vue"
@@ -24,16 +25,8 @@
   export default {
     computed: {
       ...mapState([
-        "has_server", "state"
+        "has_server", "state", "currentUser"
       ]),
-      user_id: {
-        get() {
-          return this.$store.state.currentUser.id
-        },
-        set(value) {
-          this.$store.commit('setUserId', value)
-        }
-      },
       currentComponent() {
         if (this.state == "showGame")
           return GameView;
@@ -42,11 +35,15 @@
         return LoginView;
       }
     },
-    created: function () {
+    beforeCreate() {
+      this.$store.commit('readFromSession');
+    },
+    created() {
       this.$store.dispatch("open");
     },
     components: {
-      ErrorView
+      ErrorView,
+      HeaderView
     }
   }
 </script>
@@ -57,7 +54,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
+    color: black;
   }
 </style>

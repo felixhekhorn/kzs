@@ -11,12 +11,10 @@ export default createStore({
             connection: null,
             has_server: false,
             currentError: "",
-            currentUser: {
-                "id": 1
-            },
+            state: "login",
+            currentUser: {},
             games: {},
             users: {},
-            state: "listGames",
             currentGame: {},
         }
     },
@@ -30,8 +28,9 @@ export default createStore({
         setError(state, msg) {
             state.currentError = msg;
         },
-        setUserId(state, user_id) {
-            state.currentUser.id = user_id;
+        setUser(state, msg) {
+            state.currentUser = msg.user;
+            sessionStorage.setItem("currentUser.id", state.currentUser.id);
         },
         setGames(state, res) {
             state.games = {
@@ -59,6 +58,19 @@ export default createStore({
             state.state = "showGame";
             state.currentGame = game;
         },
+        logout(state) {
+            state.state = "login";
+            state.currentUser = {};
+            sessionStorage.setItem("currentUser.id", "");
+        },
+        readFromSession(state) {
+            const currentUserId = sessionStorage.getItem("currentUser.id");
+            if (currentUserId) {
+                state.currentUser = {
+                    id: currentUserId
+                };
+            }
+        }
     },
     actions: {
         async send({
@@ -67,7 +79,7 @@ export default createStore({
             await state.connection.send(JSON.stringify(data));
         },
         async open({
-            //state,
+            state,
             dispatch,
             commit
         }) {
@@ -83,16 +95,23 @@ export default createStore({
             // notify in browser
             ws.addEventListener('open', () => {
                 commit("setHasServer", true);
+                // register current User with the server
+                if (Object.keys(state.currentUser).length)
+                    dispatch("registerUser");
             });
             commit("setConnection", ws);
         },
-        parse({
+        async parse({
             state,
             commit
         }, res) {
             commit("setError", "");
             if (res.type == "error")
                 return commit("setError", res.body);
+            if (res.type == "loggedIn") {
+                commit("setUser", res);
+                return commit("listGames");
+            }
             if (res.type == "loadedGames" || res.type == "joinedGame" || res.type == "newGame")
                 return commit("setGames", res);
             if (res.type == "addEntry")
@@ -163,6 +182,24 @@ export default createStore({
                 "type": "login",
                 "user_name": data.user_name,
                 "user_password": data.user_password,
+            })
+        },
+        async logout({
+            state,
+            dispatch
+        }) {
+            return await dispatch("send", {
+                "type": "logout",
+                "user_id": state.currentUser.id,
+            })
+        },
+        async registerUser({
+            state,
+            dispatch
+        }) {
+            return await dispatch("send", {
+                "type": "registerUser",
+                "user_id": state.currentUser.id,
             })
         },
     },

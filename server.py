@@ -7,7 +7,7 @@ import secrets
 import websockets
 from sqlalchemy.orm import sessionmaker
 
-from db import Entry, Game, Player, engine
+from db import Entry, Game, Player, User, engine
 
 # open connection
 eng = engine("database.db")
@@ -30,8 +30,6 @@ class App:
 
     async def loadGames(self):
         """Load all relevant games."""
-        # register user
-        CONNECTIONS[self.user_id] = self.websocket
         # load plays
         plays = ses.query(Player).filter(Player.user_id == self.user_id).all()
         # load associated games
@@ -90,10 +88,11 @@ class App:
             "Entry": e.as_dict(),
             "next_player_user_id": game.nextPlayer().user_id,
         }
-        await self.tellPlayers(game, response)
+        await self.tell_players(game, response)
         return response
 
-    async def tellPlayers(self, game, response):
+    async def tell_players(self, game, response):
+        """Propagate the response to all players"""
         for player in game.players:
             if player.user_id == self.user_id:
                 continue  # I'm via return
@@ -117,7 +116,7 @@ class App:
             "type": "startedGame",
             "game_id": game.id,
         }
-        await self.tellPlayers(game, response)
+        await self.tell_players(game, response)
         return response
 
     async def joinGame(self):
@@ -147,13 +146,45 @@ class App:
             "games": {game.id: game.serialize_json()},
             "users": {user_id: u.as_dict() for user_id, u in users.items()},
         }
-        await self.tellPlayers(game, response)
+        await self.tell_players(game, response)
         return response
+
+    async def login(self):
+        """Log a user in."""
+        u = (
+            ses.query(User)
+            .filter(
+                User.name == self.msg["user_name"],
+                User.password == self.msg["user_password"],
+            )
+            .first()
+        )
+        return await self.do_login(u)
+
+    async def do_login(self, u):
+        """Register the user in the globale scope and give feedback."""
+        if not u:
+            raise AppError("Unknown User!")
+        # register user
+        CONNECTIONS[u.id] = self.websocket
+        response = {"type": "loggedIn", "user": u.as_dict()}
+        return response
+
+    async def logout(self):
+        """Log a user out."""
+        # simply unregister
+        del CONNECTIONS[self.user_id]
+
+    async def registerUser(self):
+        """Register a user via id."""
+        # simply register
+        u = ses.query(User).filter(User.id == self.user_id).first()
+        return await self.do_login(u)
 
     async def parse(self):
         """Parse a single message."""
         if "type" not in self.msg:
-            raise AppError("Invalid request")
+            raise AppError("Invalid request!")
         if self.msg["type"] != "login":
             if "user_id" not in self.msg:
                 raise AppError("Unknown User!")

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <input v-model="user_name" placeholder="Benutzername" />
-    <input v-model="user_password" placeholder="Passwort" />
+    <input v-model="user_name" placeholder="Benutzername" /><br/>
+    <input v-model="user_password" placeholder="Passwort" /><br/>
     <button @click="onLogin">Anmelden</button>
   </div>
 </template>
