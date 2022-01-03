@@ -1,12 +1,10 @@
 <template>
-<div class="header" >
-  <div v-if="hasLogout" class="logout">
-    Angemeldet als {{currentUser.name}}
-    <button @click="onLogout">Abmelden</button>
-  </div>
-  <div v-if="hasBack" class="back"><button @click="onBack">zurück</button></div>
-<div class="clearer" ></div>
-  </div>
+  <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack" />
+  <q-toolbar-title>
+    Knickzettelspiel
+  </q-toolbar-title>
+  <div v-if="hasLogout" ><q-icon flat round dense name="account_circle" left=true />&nbsp;{{currentUser.name}}</div>
+  <q-btn v-if="hasLogout" flat round dense icon="logout"  @click="onLogout" />
 </template>
 
 <script>
@@ -42,16 +40,4 @@
 </script>
 
 <style scoped>
-.back {
-  text-align: left;
-}
-.logout {
-  width: 80%;
-  float: right;
-  text-align: right;
-}
-
-.clearer {
-  clear: right;
-}
 </style>

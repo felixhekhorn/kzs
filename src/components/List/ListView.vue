@@ -1,10 +1,12 @@
 <template>
   <div><button @click="loadGames()">Spiele laden</button></div>
   <AddGame />
-  <div v-if="hasGames" class="GamesList">
-    <div v-for="game in games" :key="game.id">
-      <GameView :game="game" />
-    </div>
+  <div v-if="hasGames" class="q-pa-md" style="max-width: 550px">
+    <q-list padding>
+      <q-item v-for="game in games" :key="game.id">
+        <GameView :game="game" />
+      </q-item>
+    </q-list>
   </div>
   <div v-else class="">
     Keine Spiele gefunden.

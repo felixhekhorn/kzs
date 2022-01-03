@@ -1,7 +1,7 @@
 <template>
-    Mitspieler:
-    <span v-for="player in game.players" :key="player.id"
-      :class="playerClasses[player.id]">{{users[player.user_id].name}}</span>
+  <q-icon name="people" left="1" />&nbsp;
+  <span v-for="player in game.players" :key="player.id"
+    :class="playerClasses[player.id]">{{users[player.user_id].name}}</span>
 </template>
 
 <script>
@@ -17,7 +17,7 @@
       ...mapState([
         "users"
       ]),
-      playerClasses(){
+      playerClasses() {
         let classes = {};
         this.game.players.forEach(p => {
           let cls = ['Player'];
@@ -28,8 +28,7 @@
         return classes;
       }
     },
-    methods: {
-    }
+    methods: {}
   }
 </script>
 
