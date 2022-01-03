@@ -7,7 +7,7 @@
     </div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
-        <EntryView :entry="entry" :style="entryBodyStyles[entry.id]" />
+        <EntryView :entry="entry" :visible="visibles[entry.id]" />
       </div>
       <div v-if="canSend">
         <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:"></textarea>
@@ -32,18 +32,16 @@
       }
     },
     computed: {
-      entryBodyStyles() {
+      visibles() {
         let styles = {};
         // set default for most
         this.game.entries.forEach(e => {
-          styles[e.id] = {
-            "display": this.game.state == "finished" ? "visible" : "none"
-          }
+          styles[e.id] = this.game.state == "finished"
         });
         // show eventually last
         if (this.game.entries.length > 0 && this.canSend) {
           const le = this.game.entries[this.game.entries.length - 1];
-          styles[le.id].display = "visible";
+          styles[le.id] = true;
         }
         return styles;
       },

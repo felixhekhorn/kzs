@@ -124,7 +124,7 @@ export default createStore({
                 // open immediately for me, since I'm first
                 const g = state.games[res.game_id];
                 if (state.currentUser.id == g.user_id)
-                    commit("openGame", g)
+                    commit("openGame", res.game_id)
                 return
             }
             if (res.type == "endedGame") {

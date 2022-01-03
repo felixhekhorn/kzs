@@ -1,7 +1,7 @@
 <template>
   <div class="Entry">
     <span>{{users[entry.user_id].name}} um {{ctime.format("DD.MM.YY HH:mm")}}</span>
-    <p :style="style">{{entry.body}}</p>
+    <p>{{body}}</p>
   </div>
 </template>
 
@@ -17,15 +17,16 @@
   export default {
     props: {
       "entry": Object,
-      "style": Object
+      "visible": Boolean
     },
     computed: {
       ctime() {
         return dayjs(this.entry.ctime)
       },
-      ...mapState({
-        users: "users",
-      })
+      body(){
+        return this.visible ? this.entry.body : "...";
+      },
+      ...mapState(["users"])
     },
     methods: {}
   }
