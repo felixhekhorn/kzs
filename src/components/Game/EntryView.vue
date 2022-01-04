@@ -1,8 +1,10 @@
 <template>
-  <div class="Entry">
-    <span>{{users[entry.user_id].name}} um {{ctime.format("DD.MM.YY HH:mm")}}</span>
-    <p>{{body}}</p>
-  </div>
+    <q-chat-message
+        :name="users[entry.user_id].name"
+        :text="body"
+        v-bind="sent"
+        :stamp="ctime.format('DD.MM.YY HH:mm')"
+      />
 </template>
 
 <script>
@@ -24,9 +26,12 @@
         return dayjs(this.entry.ctime)
       },
       body(){
-        return this.visible ? this.entry.body : "...";
+        return this.visible ? [this.entry.body] : ["..."];
       },
-      ...mapState(["users"])
+      sent(){
+        return this.entry.user_id == this.currentUser.id ? {"sent": true} : {};
+      },
+      ...mapState(["users", "currentUser"])
     },
     methods: {}
   }

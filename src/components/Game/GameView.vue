@@ -1,19 +1,24 @@
 <template>
   <div class="GameView">
-    <h1>{{game.title}}</h1>
-    <div>
-      <PlayerList :game="game" />
-      <button v-if="canEnd" @click="onEnd">Beenden</button>
-    </div>
     <div class="entries">
       <div v-for="entry in game.entries" :key="entry.id" class="Entry">
         <EntryView :entry="entry" :visible="visibles[entry.id]" />
       </div>
       <div v-if="canSend">
-        <textarea v-model="message" placeholder="und dann geschah etwas Seltsames:"></textarea>
-        <button @click="addEntry">Senden</button>
+        <q-input v-model="message" autogrow placeholder="und dann geschah etwas Seltsames:">
+          <template v-slot:append>
+            <q-btn @click="addEntry" round icon="send" />
+          </template>
+        </q-input>
       </div>
     </div>
+    <q-page-sticky expand position="top">
+      <q-list style="width:100%;" class="bg-white text-center">
+        <q-item>
+          <GameHeadView :game="game" mode="show" />
+        </q-item>
+      </q-list>
+    </q-page-sticky>
   </div>
 </template>
 
@@ -23,7 +28,7 @@
   } from 'vuex'
 
   import EntryView from "./EntryView.vue"
-  import PlayerList from "../PlayerList.vue"
+  import GameHeadView from "../GameHeadView.vue"
 
   export default {
     data() {
@@ -48,9 +53,6 @@
       canSend() {
         return this.game.next_player_user_id == this.currentUser.id && this.game.state != "finished"
       },
-      canEnd() {
-        return this.game.user_id == this.currentUser.id && this.game.state == "running"
-      },
       game() {
         return this.games[this.currentGameId];
       },
@@ -63,16 +65,16 @@
           this.$store.dispatch("addEntry", this.message);
         this.message = "";
       },
-      onEnd() {
-        this.$store.dispatch("endGame");
-      },
     },
     components: {
       EntryView,
-      PlayerList,
+      GameHeadView,
     }
   }
 </script>
 
 <style scoped>
+  .entries {
+    padding-top: 57px;
+  }
 </style>

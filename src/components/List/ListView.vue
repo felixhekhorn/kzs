@@ -1,10 +1,10 @@
 <template>
   <div><button @click="loadGames()">Spiele laden</button></div>
   <AddGame />
-  <div v-if="hasGames" class="q-pa-md" style="max-width: 550px">
-    <q-list padding>
-      <q-item v-for="game in games" :key="game.id">
-        <GameView :game="game" />
+  <div v-if="hasGames" >
+    <q-list separator >
+      <q-item v-for="game in games" :key="game.id" clickable >
+        <GameHeadView :game="game" mode="list" />
       </q-item>
     </q-list>
   </div>
@@ -17,7 +17,7 @@
   import {
     mapState
   } from 'vuex';
-  import GameView from "./GameView.vue";
+  import GameHeadView from "../GameHeadView.vue";
   import AddGame from "./AddGame.vue";
   import isObjectEmpty from "../../lib/isObjectEmpty.js"
 
@@ -33,7 +33,7 @@
       }
     },
     components: {
-      GameView,
+      GameHeadView,
       AddGame,
     },
     methods: {

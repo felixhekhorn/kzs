@@ -1,18 +1,20 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr fFf">
     <q-header elevated class="glossy text-center">
       <q-toolbar>
         <HeaderView />
       </q-toolbar>
     </q-header>
 
-    <q-page-container >
-      <div v-if="has_server">
-        <ErrorView />
-        <component :is="currentComponent" />
-      </div>
-      <div v-else>
-        WebSocket-Server nicht verfügbar!
+    <q-page-container>
+      <div class="q-pa-md row justify-center"  >
+        <div v-if="has_server" style="width: 100%; max-width: 550px" >
+          <ErrorView />
+          <component :is="currentComponent" />
+        </div>
+        <div v-else>
+          WebSocket-Server nicht verfügbar!
+        </div>
       </div>
     </q-page-container>
   </q-layout>
@@ -58,10 +60,4 @@
 </script>
 
 <style>
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: black;
-  }
 </style>

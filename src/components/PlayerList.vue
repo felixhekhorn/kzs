@@ -1,5 +1,5 @@
 <template>
-  <q-icon name="people" left="1" />&nbsp;
+  <q-icon name="people" />&nbsp;
   <span v-for="player in game.players" :key="player.id"
     :class="playerClasses[player.id]">{{users[player.user_id].name}}</span>
 </template>

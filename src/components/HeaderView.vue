@@ -3,7 +3,9 @@
   <q-toolbar-title>
     Knickzettelspiel
   </q-toolbar-title>
-  <div v-if="hasLogout" ><q-icon flat round dense name="account_circle" left=true />&nbsp;{{currentUser.name}}</div>
+  <q-chip v-if="hasLogout" color="white" >
+    <q-icon flat round dense name="account_circle" />&nbsp;{{currentUser.name}}
+  </q-chip>
   <q-btn v-if="hasLogout" flat round dense icon="logout"  @click="onLogout" />
 </template>
 
