@@ -64,6 +64,8 @@ export default createStore({
         logout(state) {
             state.state = "login";
             state.currentUser = {};
+            state.games = {};
+            state.users = {};
             sessionStorage.setItem("currentUser.id", "");
         },
         readFromSession(state) {
@@ -106,13 +108,16 @@ export default createStore({
         },
         async parse({
             state,
-            commit
+            commit,dispatch
         }, res) {
             commit("setError", "");
             if (res.type == "error")
                 return commit("setError", res.body);
             if (res.type == "loggedIn") {
                 commit("setUser", res);
+                // Immediately load my games
+                // Note that this _could_ be a infinite loop - but it isn't
+                dispatch("loadGames");
                 return commit("listGames");
             }
             if (res.type == "loadedGames" || res.type == "joinedGame" || res.type == "newGame")

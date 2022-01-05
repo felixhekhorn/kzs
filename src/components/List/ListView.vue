@@ -1,11 +1,10 @@
 <template>
-  <div><button @click="loadGames()">Spiele laden</button></div>
-  <AddGame />
+  <ListHead />
   <div v-if="hasGames" >
     <q-list separator >
-      <q-item v-for="game in games" :key="game.id" clickable >
+      <template v-for="game in games" :key="game.id" >
         <GameHeadView :game="game" mode="list" />
-      </q-item>
+      </template>
     </q-list>
   </div>
   <div v-else class="">
@@ -18,7 +17,7 @@
     mapState
   } from 'vuex';
   import GameHeadView from "../GameHeadView.vue";
-  import AddGame from "./AddGame.vue";
+  import ListHead from "./ListHead.vue";
   import isObjectEmpty from "../../lib/isObjectEmpty.js"
 
   export default {
@@ -34,12 +33,7 @@
     },
     components: {
       GameHeadView,
-      AddGame,
-    },
-    methods: {
-      loadGames() {
-        this.$store.dispatch("loadGames");
-      },
+      ListHead,
     },
   }
 </script>

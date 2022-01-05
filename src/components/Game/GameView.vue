@@ -14,9 +14,7 @@
     </div>
     <q-page-sticky expand position="top">
       <q-list style="width:100%;" class="bg-white text-center">
-        <q-item>
-          <GameHeadView :game="game" mode="show" />
-        </q-item>
+        <GameHeadView :game="game" mode="show" />
       </q-list>
     </q-page-sticky>
   </div>

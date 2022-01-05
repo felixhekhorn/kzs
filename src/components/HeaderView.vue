@@ -1,5 +1,6 @@
 <template>
   <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack" />
+  <q-btn v-if="!hasBack" flat round dense icon="" class="invisible"/>
   <q-toolbar-title>
     Knickzettelspiel
   </q-toolbar-title>
