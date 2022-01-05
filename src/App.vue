@@ -7,13 +7,13 @@
     </q-header>
 
     <q-page-container>
-      <div class="q-pa-md row justify-center"  >
-        <div v-if="has_server" style="width: 100%; max-width: 550px" >
+      <div class="q-pa-md row justify-center">
+        <div v-if="has_server" style="width: 100%; max-width: 550px">
           <ErrorView />
           <component :is="currentComponent" />
         </div>
         <div v-else>
-          WebSocket-Server nicht verfügbar!
+          <q-banner rounded class="bg-red text-white">WebSocket-Server nicht verfügbar!</q-banner>
         </div>
       </div>
     </q-page-container>

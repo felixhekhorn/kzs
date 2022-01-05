@@ -1,15 +1,13 @@
 <template>
   <ListHead />
-  <div v-if="hasGames" >
-    <q-list separator >
-      <template v-for="game in games" :key="game.id" >
-        <GameHeadView :game="game" mode="list" />
-      </template>
-    </q-list>
-  </div>
-  <div v-else class="">
+  <q-list v-if="hasGames" separator>
+    <template v-for="game in games" :key="game.id">
+      <GameHeadView :game="game" mode="list" />
+    </template>
+  </q-list>
+  <q-banner v-else rounded class="bg-grey-3">
     Keine Spiele gefunden.
-  </div>
+  </q-banner>
 </template>
 
 <script>

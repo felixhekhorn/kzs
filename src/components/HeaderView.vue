@@ -1,13 +1,16 @@
 <template>
   <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack" />
-  <q-btn v-if="!hasBack" flat round dense icon="" class="invisible"/>
+  <q-btn v-if="!hasBack" flat round dense icon="" class="invisible" />
   <q-toolbar-title>
     Knickzettelspiel
   </q-toolbar-title>
-  <q-chip v-if="hasLogout" color="white" >
-    <q-icon flat round dense name="account_circle" />&nbsp;{{currentUser.name}}
-  </q-chip>
-  <q-btn v-if="hasLogout" flat round dense icon="logout"  @click="onLogout" />
+  <template v-if="hasLogout">
+    <q-chip color="white">
+      <q-icon flat round dense name="account_circle" />&nbsp;{{currentUser.name}}
+    </q-chip>
+    <q-btn flat round dense icon="logout" @click="onLogout" />
+  </template>
+  <q-btn v-if="!hasLogout" flat round dense icon="" class="invisible" />
 </template>
 
 <script>
@@ -32,7 +35,7 @@
         if (this.state == "showGame")
           return this.$store.commit("listGames");
       },
-      onLogout(){
+      onLogout() {
         if (this.state != "login") {
           this.$store.dispatch("logout");
           return this.$store.commit("logout");

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentError">{{currentError}}</div>
+  <q-banner v-if="currentError" rounded class="bg-red text-white q-mb-sm">{{currentError}}</q-banner>
 </template>
 
 <script>
@@ -16,5 +16,5 @@
   }
 </script>
 
-<style scoped >
+<style scoped>
 </style>

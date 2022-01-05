@@ -50,6 +50,7 @@ export default createStore({
         listGames(state) {
             state.state = "listGames";
             state.currentGame = null;
+            state.currentError = "";
         },
         startedGame(state, res) {
             state.games[res.game_id].state = "running";
@@ -60,6 +61,7 @@ export default createStore({
         openGame(state, game_id) {
             state.state = "showGame";
             state.currentGameId = game_id;
+            state.currentError = "";
         },
         logout(state) {
             state.state = "login";
@@ -89,7 +91,7 @@ export default createStore({
             commit
         }) {
             // Establish connection via WebSocket
-            const ws = new WebSocket("ws://localhost:8001");
+            const ws = new WebSocket("ws://192.168.1.80:8001");
             // parse answer
             ws.addEventListener('message', (event) => {
                 //console.log('Message from server: ', event.data);
@@ -108,7 +110,8 @@ export default createStore({
         },
         async parse({
             state,
-            commit,dispatch
+            commit,
+            dispatch
         }, res) {
             commit("setError", "");
             if (res.type == "error")
@@ -221,6 +224,16 @@ export default createStore({
             return await dispatch("send", {
                 "type": "registerUser",
                 "user_id": state.currentUser.id,
+            })
+        },
+        async newUser({
+            dispatch
+        }, data) {
+            return await dispatch("send", {
+                "type": "newUser",
+                "user_name": data.user_name,
+                "user_password_1": data.user_password_1,
+                "user_password_2": data.user_password_2,
             })
         },
     },

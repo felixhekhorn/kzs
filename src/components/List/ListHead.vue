@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="q-mb-sm">
     <q-btn-group rounded>
-      <q-btn rounded icon="add" label="Neu" :color="[showingNew ? 'primary':'white']"
-        :text-color="[showingNew ? 'white':'black']" @click="onShowNew" />
-      <q-btn rounded icon="link" label="Beitreten" :color="[showingJoin ? 'primary':'white']"
-        :text-color="[showingJoin ? 'white':'black']" @click="onShowJoin" />
+      <q-btn rounded icon="add" label="Neu" :color="showingNew ? 'primary':'white'"
+        :text-color="showingNew ? 'white':'black'" @click="onShowNew" />
+      <q-btn rounded icon="link" label="Beitreten" :color="showingJoin ? 'primary':'white'"
+        :text-color="showingJoin ? 'white':'black'" @click="onShowJoin" />
       <q-btn rounded icon="refresh" label="Aktualisieren" @click="loadGames" />
     </q-btn-group>
     <div v-if="showingNew">

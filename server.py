@@ -203,11 +203,35 @@ class App:
         u = ses.query(User).filter(User.id == self.user_id).first()
         return await self.do_login(u)
 
+    async def newUser(self):
+        """Create a new user and log him in."""
+        name = self.msg["user_name"]
+        uu = (
+            ses.query(User)
+            .filter(
+                User.name == name,
+            )
+            .first()
+        )
+        if uu:
+            raise AppError(f"Username '{name}' is already taken")
+        pw = self.msg["user_password_1"]
+        pw2 = self.msg["user_password_2"]
+        if pw.strip() != pw or pw2.strip() != pw2:
+            raise AppError("Passwords contain whitespace!")
+        if pw != pw2:
+            raise AppError("Passwords are not identical!")
+
+        u = User(name=name, password=pw)
+        ses.add(u)
+        ses.commit()
+        return await self.do_login(u)
+
     async def parse(self):
         """Parse a single message."""
         if "type" not in self.msg:
             raise AppError("Invalid request!")
-        if self.msg["type"] != "login":
+        if self.msg["type"] not in ["login", "newUser"]:
             if "user_id" not in self.msg:
                 raise AppError("Unknown User!")
             self.user_id = self.msg["user_id"]
@@ -227,8 +251,10 @@ async def handler(websocket, _path):
             msg = json.loads(message)
             app = App(websocket, msg)
             response = await app.parse()
-        except (AppError, KeyError) as e:
+        except AppError as e:
             response = {"type": "error", "body": str(e)}
+        except KeyError as e:
+            response = {"type": "error", "body": f"KeyError: {e}"}
 
         if response:
             await websocket.send(json.dumps(response))
