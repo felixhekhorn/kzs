@@ -5,7 +5,7 @@
     </q-item-section>
     <q-item-section>
       <q-item-label>{{game.title}}</q-item-label>
-      <q-item-label caption lines="1">
+      <q-item-label caption lines="2">
         <PlayerList :game="game" />
         <q-icon name="article" />&nbsp;{{game.entries.length}}
         <q-icon name="event" />&nbsp;{{ctime.format("DD.MM.YY HH:mm")}}

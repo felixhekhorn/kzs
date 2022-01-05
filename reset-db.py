@@ -1,8 +1,8 @@
-# import secrets
+import datetime
 
 from sqlalchemy.orm import sessionmaker
 
-from db import Base, Game, User, Player, Entry, engine
+from db import Base, Entry, Game, Player, User, engine
 
 # open connection
 
@@ -23,9 +23,30 @@ ses.add_all(
 )
 ses.add_all(
     [
-        Game(id=1, title="A1 running", user_id=1, slug="gA1", state="running"),
-        Game(id=2, title="B1 init", user_id=2, slug="gB1", state="init"),
-        Game(id=3, title="C1 finished", user_id=3, slug="gC1", state="finished"),
+        Game(
+            id=1,
+            title="A1 running",
+            user_id=1,
+            slug="gA1",
+            state="running",
+            ctime=datetime.datetime.now() - datetime.timedelta(minutes=65),
+        ),
+        Game(
+            id=2,
+            title="B1 init",
+            user_id=2,
+            slug="gB1",
+            state="init",
+            ctime=datetime.datetime.now() - datetime.timedelta(hours=25),
+        ),
+        Game(
+            id=3,
+            title="C1 finished",
+            user_id=3,
+            slug="gC1",
+            state="finished",
+            ctime=datetime.datetime.now() - datetime.timedelta(days=367),
+        ),
         Game(id=4, title="A2 init", user_id=1, slug="gA2", state="init"),
     ]
 )
