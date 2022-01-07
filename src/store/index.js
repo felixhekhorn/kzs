@@ -90,8 +90,19 @@ export default createStore({
             dispatch,
             commit
         }) {
+            function getWebSocketServer() {
+                if (window.location.host === "felixhekhorn.github.io") {
+                    return "wss://kzs.herokuapp.com/";
+                } else if (window.location.host === "localhost:8080") {
+                    return "ws://localhost:8001/";
+                } else if (window.location.host === "192.168.1.80:8080") {
+                    return "ws://192.168.1.80:8001/";
+                } else {
+                    throw new Error(`Unsupported host: ${window.location.host}`);
+                }
+            }
             // Establish connection via WebSocket
-            const ws = new WebSocket("ws://192.168.1.80:8001");
+            const ws = new WebSocket(getWebSocketServer());
             // parse answer
             ws.addEventListener('message', (event) => {
                 //console.log('Message from server: ', event.data);
