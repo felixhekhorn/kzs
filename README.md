@@ -1,24 +1,21 @@
-# vue-ws-example
+# Knickzettelspiel
 
-## Project setup
+The rules are simply: just continue the story from the previous player.
+
+## Installation
 ```
+# it is highly recommended to first create a virtual python and then a virtual node environment
+pip install -r requirements.txt
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Development
 ```
+# activate both virtual environments
+python server.py
+# open a separate terminal, activate again the environments
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Technology stack
+- backend: Python using [`websockets`](https://websockets.readthedocs.io)
+- frontend: Javascript using [`Vue`](https://v3.vuejs.org/) and [`Quasar`](https://quasar.dev/)

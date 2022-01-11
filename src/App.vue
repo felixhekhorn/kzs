@@ -17,6 +17,11 @@
         </div>
       </div>
     </q-page-container>
+
+    <q-footer class="glossy text-center q-pa-sm items-center">
+      &copy; F. Hekhorn 2021-2022 <a target="_blanck" href="https://github.com/felixhekhorn/kzs"><img
+          src="img/GitHub-Mark-32px.png" alt="Github" style="max-height:17px;vertical-align:text-bottom;" /></a>
+    </q-footer>
   </q-layout>
 </template>
 
