@@ -8,7 +8,7 @@
       <q-btn rounded icon="refresh" label="Aktualisieren" @click="loadGames" />
     </q-btn-group>
     <div v-if="showingNew">
-      <q-input v-model="newTitle" placeholder="Spieletitel">
+      <q-input v-model="newTitle" placeholder="Spieltitel">
         <template v-slot:append>
           <q-btn @click="onNewGame" round icon="send" />
         </template>
