@@ -1,12 +1,12 @@
 import asyncio
 import json
 import os
-import signal
 import secrets
+import signal
 
 import websockets
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from db import Entry, Game, Player, User, engine
 
@@ -15,7 +15,7 @@ uri = os.getenv("DATABASE_URL")
 if uri:
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
-    eng = create_engine(uri)
+    eng = create_engine(uri, connect_args={'sslmode':'require'})
 else:
     eng = engine("database.db")
 Session = sessionmaker(bind=eng)

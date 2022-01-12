@@ -1,12 +1,22 @@
 import datetime
+import os
 
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from db import Base, Entry, Game, Player, User, engine
 
 # open connection
 
-eng = engine("database.db")
+# open connection
+uri = os.getenv("DATABASE_URL")
+if uri:
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
+    eng = create_engine(uri, connect_args={'sslmode':'require'})
+else:
+    eng = engine("database.db")
+
 Base.metadata.drop_all(bind=eng)
 Base.metadata.create_all(bind=eng)
 Session = sessionmaker(bind=eng)
