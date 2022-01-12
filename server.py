@@ -6,11 +6,18 @@ import secrets
 
 import websockets
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
 from db import Entry, Game, Player, User, engine
 
 # open connection
-eng = engine("database.db")
+uri = os.getenv("DATABASE_URL")
+if uri:
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
+    eng = create_engine(uri)
+else:
+    eng = engine("database.db")
 Session = sessionmaker(bind=eng)
 ses = Session()
 
