@@ -17,5 +17,5 @@ python server.py
 npm run serve
 ```
 ## Technology stack
-- backend: Python using [`websockets`](https://websockets.readthedocs.io)
-- frontend: Javascript using [`Vue`](https://v3.vuejs.org/) and [`Quasar`](https://quasar.dev/)
+- backend: Python using [`websockets`](https://websockets.readthedocs.io) and [`SQLAlchemy`](https://www.sqlalchemy.org/) via [Heroku](https://www.heroku.com/)
+- frontend: Javascript using [`Vue`](https://v3.vuejs.org/) and [`Quasar`](https://quasar.dev/) via [GitHub Pages](https://felixhekhorn.github.io/kzs)
