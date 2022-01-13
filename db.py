@@ -15,7 +15,7 @@ from sqlalchemy import func
 
 
 class MyBase:
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
 
     def as_dict(self):
         d = {}

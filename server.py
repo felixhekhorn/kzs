@@ -15,7 +15,7 @@ uri = os.getenv("DATABASE_URL")
 if uri:
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
-    eng = create_engine(uri, connect_args={'sslmode':'require'})
+    eng = create_engine(uri, connect_args={"sslmode": "require"})
 else:
     eng = engine("database.db")
 Session = sessionmaker(bind=eng)
@@ -228,6 +228,8 @@ class App:
             raise AppError("Passwords contain whitespace!")
         if pw != pw2:
             raise AppError("Passwords are not identical!")
+        if len(pw) <= 0:
+            raise AppError("Password can not be empty!")
 
         u = User(name=name, password=pw)
         ses.add(u)

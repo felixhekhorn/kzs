@@ -13,7 +13,7 @@ uri = os.getenv("DATABASE_URL")
 if uri:
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
-    eng = create_engine(uri, connect_args={'sslmode':'require'})
+    eng = create_engine(uri, connect_args={"sslmode": "require"})
 else:
     eng = engine("database.db")
 
@@ -23,70 +23,66 @@ Session = sessionmaker(bind=eng)
 ses = Session()
 
 # add initial data
-ses.add_all(
-    [
-        User(id=1, name="A", password="A"),
-        User(id=2, name="B", password="B"),
-        User(id=3, name="C", password="C"),
-        User(id=4, name="D", password="D"),
-    ]
+# 1. users
+uA = User(name="A", password="A")
+uB = User(name="B", password="B")
+uC = User(name="C", password="C")
+uD = User(name="D", password="D")
+ses.add_all([uA, uB, uC, uD])
+ses.commit()
+# 2. games
+gA1 = Game(
+    title="A1 running",
+    user_id=uA.id,
+    slug="gA1",
+    state="running",
+    ctime=datetime.datetime.now() - datetime.timedelta(minutes=65),
 )
-ses.add_all(
-    [
-        Game(
-            id=1,
-            title="A1 running",
-            user_id=1,
-            slug="gA1",
-            state="running",
-            ctime=datetime.datetime.now() - datetime.timedelta(minutes=65),
-        ),
-        Game(
-            id=2,
-            title="B1 init",
-            user_id=2,
-            slug="gB1",
-            state="init",
-            ctime=datetime.datetime.now() - datetime.timedelta(hours=25),
-        ),
-        Game(
-            id=3,
-            title="C1 finished",
-            user_id=3,
-            slug="gC1",
-            state="finished",
-            ctime=datetime.datetime.now() - datetime.timedelta(days=367),
-        ),
-        Game(id=4, title="A2 init", user_id=1, slug="gA2", state="init"),
-    ]
+gB1 = Game(
+    title="B1 init",
+    user_id=uB.id,
+    slug="gB1",
+    state="init",
+    ctime=datetime.datetime.now() - datetime.timedelta(hours=25),
 )
+gC1 = Game(
+    title="C1 finished",
+    user_id=uC.id,
+    slug="gC1",
+    state="finished",
+    ctime=datetime.datetime.now() - datetime.timedelta(days=367),
+)
+gA2 = Game(title="A2 init", user_id=uA.id, slug="gA2", state="init")
+ses.add_all([gA1, gB1, gC1, gA2])
+ses.commit()
+# 3. players + entries
 ses.add_all(
     [
         # gA1
-        Player(id=1, position=0, user_id=1, game_id=1),
-        Player(id=2, position=1, user_id=2, game_id=1),
-        Player(id=3, position=2, user_id=3, game_id=1),
+        Player(position=0, user_id=uA.id, game_id=gA1.id),
+        Player(position=1, user_id=uB.id, game_id=gA1.id),
+        Player(position=2, user_id=uC.id, game_id=gA1.id),
         # gB1
-        Player(id=4, position=0, user_id=2, game_id=2),
-        Player(id=5, position=1, user_id=1, game_id=2),
-        Player(id=6, position=2, user_id=3, game_id=2),
+        Player(position=0, user_id=uB.id, game_id=gB1.id),
+        Player(position=1, user_id=uA.id, game_id=gB1.id),
+        Player(position=2, user_id=uC.id, game_id=gB1.id),
         # gC1
-        Player(id=7, position=0, user_id=3, game_id=3),
-        Player(id=8, position=1, user_id=1, game_id=3),
-        Player(id=9, position=2, user_id=2, game_id=3),
+        Player(position=0, user_id=uC.id, game_id=gC1.id),
+        Player(position=1, user_id=uA.id, game_id=gC1.id),
+        Player(position=2, user_id=uB.id, game_id=gC1.id),
         # gA2
-        Player(id=10, position=0, user_id=1, game_id=4),
-        Player(id=11, position=1, user_id=2, game_id=4),
+        Player(position=0, user_id=uA.id, game_id=gA2.id),
+        Player(position=1, user_id=uB.id, game_id=gA2.id),
     ]
 )
 ses.add_all(
     [
         # gA1
-        Entry(id=1, body="bla", user_id=1, game_id=1),
-        Entry(id=2, body="blabla", user_id=2, game_id=1),
+        Entry(body="bla", user_id=uA.id, game_id=gA1.id),
+        Entry(body="blabla", user_id=uB.id, game_id=gA1.id),
         # gC1
-        Entry(id=3, body="this is", user_id=3, game_id=3),
-        Entry(id=4, body="the end", user_id=1, game_id=3),
+        Entry(body="this is", user_id=uC.id, game_id=gC1.id),
+        Entry(body="the end", user_id=uA.id, game_id=gC1.id),
     ]
 )
 ses.commit()
