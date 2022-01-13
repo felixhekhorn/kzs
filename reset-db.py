@@ -24,10 +24,10 @@ ses = Session()
 
 # add initial data
 # 1. users
-uA = User(name="A", password="A")
-uB = User(name="B", password="B")
-uC = User(name="C", password="C")
-uD = User(name="D", password="D")
+uA = User(name="A", password=User.hash_password("A"))
+uB = User(name="B", password=User.hash_password("B"))
+uC = User(name="C", password=User.hash_password("C"))
+uD = User(name="D", password=User.hash_password("D"))
 ses.add_all([uA, uB, uC, uD])
 ses.commit()
 # 2. games

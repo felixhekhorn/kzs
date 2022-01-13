@@ -115,9 +115,9 @@ class App:
         if game.user_id != self.user_id:
             raise AppError(f"User {self.user_id} is does not own Game {game_id}!")
         if len(game.players) < 3:
-            raise AppError(f"At least 3 players are required to play!")
+            raise AppError("At least 3 players are required to play!")
         if game.state != "init":
-            raise AppError(f"Game is not in init mode!")
+            raise AppError("Game is not in init mode!")
         game.state = "running"
         ses.commit()
         # reply with confirmation for everybody
@@ -137,7 +137,7 @@ class App:
         if game.user_id != self.user_id:
             raise AppError(f"User {self.user_id} is does not own Game {game_id}!")
         if game.state != "running":
-            raise AppError(f"Game is not running!")
+            raise AppError("Game is not running!")
         game.state = "finished"
         ses.commit()
         # reply with confirmation for everybody
@@ -184,10 +184,13 @@ class App:
             ses.query(User)
             .filter(
                 User.name == self.msg["user_name"],
-                User.password == self.msg["user_password"],
             )
             .first()
         )
+        if not u:
+            raise AppError("Unknown User!")
+        if not u.verify_password(self.msg["user_password"]):
+            raise AppError("Wrong password!")
         return await self.do_login(u)
 
     async def do_login(self, u):
@@ -231,7 +234,7 @@ class App:
         if len(pw) <= 0:
             raise AppError("Password can not be empty!")
 
-        u = User(name=name, password=pw)
+        u = User(name=name, password=User.hash_password(pw))
         ses.add(u)
         ses.commit()
         return await self.do_login(u)
@@ -278,7 +281,7 @@ async def main():
     loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
     port = int(os.environ.get("PORT", "8001"))
-    async with websockets.serve(handler, "", port):
+    async with websockets.serve(handler, "", port): # pylint: disable=no-member
         await stop
 
 

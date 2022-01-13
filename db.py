@@ -1,17 +1,12 @@
+import binascii
+import hashlib
+import os
 import pathlib
 
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Text,
-    create_engine,
-    DateTime,
-)
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String, Text,
+                        create_engine, func)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import func
 
 
 class MyBase:
@@ -19,7 +14,7 @@ class MyBase:
 
     def as_dict(self):
         d = {}
-        for c in self.__table__.columns:
+        for c in self.__table__.columns: # pylint: disable=no-member
             if c.name == "password":
                 continue
             d[c.name] = getattr(self, c.name)
@@ -37,6 +32,26 @@ class User(Base):
     name = Column(String)
     password = Column(String)
     games = relationship("Game")
+
+    # https://www.vitoshacademy.com/hashing-passwords-in-python/
+    @staticmethod
+    def hash_password(password):
+        """Hash a password for storing."""
+        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode("ascii")
+        pwdhash = hashlib.pbkdf2_hmac("sha512", password.encode("utf-8"), salt, 100000)
+        pwdhash = binascii.hexlify(pwdhash)
+        return (salt + pwdhash).decode("ascii")
+
+    def verify_password(self, provided_password):
+        """Verify a stored password against one provided by user"""
+        stored_password = self.password
+        salt = stored_password[:64]
+        stored_password = stored_password[64:]
+        pwdhash = hashlib.pbkdf2_hmac(
+            "sha512", provided_password.encode("utf-8"), salt.encode("ascii"), 100000
+        )
+        pwdhash = binascii.hexlify(pwdhash).decode("ascii")
+        return pwdhash == stored_password
 
 
 class Game(Base):
