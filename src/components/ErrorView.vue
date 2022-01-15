@@ -1,20 +1,17 @@
 <template>
-  <q-banner v-if="currentError" rounded class="bg-red text-white q-mb-sm">{{currentError}}</q-banner>
+  <q-banner v-if="currentError" rounded class="bg-red text-white q-mb-sm">{{
+    currentError
+  }}</q-banner>
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
+import { mapState } from "vuex";
 
-  export default {
-    computed: {
-      ...mapState([
-        "currentError"
-      ]),
-    },
-  }
+export default {
+  computed: {
+    ...mapState(["currentError"]),
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

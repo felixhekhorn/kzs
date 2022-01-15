@@ -5,7 +5,11 @@
         <EntryView :entry="entry" :visible="visibles[entry.id]" />
       </div>
       <div v-if="canSend">
-        <q-input v-model="message" autogrow placeholder="setze hier die Geschichte fort: z.B. 'und dann geschah etwas Seltsames:'">
+        <q-input
+          v-model="message"
+          autogrow
+          placeholder="setze hier die Geschichte fort: z.B. 'und dann geschah etwas Seltsames:'"
+        >
           <template v-slot:append>
             <q-btn @click="addEntry" round icon="send" />
           </template>
@@ -13,7 +17,7 @@
       </div>
     </div>
     <q-page-sticky expand position="top">
-      <q-list style="width:100%;" class="bg-white text-center">
+      <q-list style="width: 100%" class="bg-white text-center">
         <GameHeadView :game="game" mode="show" />
       </q-list>
     </q-page-sticky>
@@ -21,58 +25,58 @@
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
+import { mapState } from "vuex";
 
-  import EntryView from "./EntryView.vue"
-  import GameHeadView from "../GameHeadView.vue"
+import EntryView from "./EntryView.vue";
+import GameHeadView from "../GameHeadView.vue";
 
-  export default {
-    data() {
-      return {
-        message: ""
+export default {
+  data() {
+    return {
+      message: "",
+    };
+  },
+  computed: {
+    visibles() {
+      let styles = {};
+      // set default for most
+      this.game.entries.forEach((e) => {
+        styles[e.id] = this.game.state == "finished";
+      });
+      // show eventually last
+      if (this.game.entries.length > 0 && this.canSend) {
+        const le = this.game.entries[this.game.entries.length - 1];
+        styles[le.id] = true;
       }
+      return styles;
     },
-    computed: {
-      visibles() {
-        let styles = {};
-        // set default for most
-        this.game.entries.forEach(e => {
-          styles[e.id] = this.game.state == "finished"
-        });
-        // show eventually last
-        if (this.game.entries.length > 0 && this.canSend) {
-          const le = this.game.entries[this.game.entries.length - 1];
-          styles[le.id] = true;
-        }
-        return styles;
-      },
-      canSend() {
-        return this.game.next_player_user_id == this.currentUser.id && this.game.state != "finished"
-      },
-      game() {
-        return this.games[this.currentGameId];
-      },
-      ...mapState(["currentUser", "currentGameId", "games"])
+    canSend() {
+      return (
+        this.game.next_player_user_id == this.currentUser.id &&
+        this.game.state != "finished"
+      );
     },
-    methods: {
-      addEntry() {
-        this.message = this.message.trim();
-        if (this.message)
-          this.$store.dispatch("addEntry", this.message);
-        this.message = "";
-      },
+    game() {
+      return this.games[this.currentGameId];
     },
-    components: {
-      EntryView,
-      GameHeadView,
-    }
-  }
+    ...mapState(["currentUser", "currentGameId", "games"]),
+  },
+  methods: {
+    addEntry() {
+      this.message = this.message.trim();
+      if (this.message) this.$store.dispatch("addEntry", this.message);
+      this.message = "";
+    },
+  },
+  components: {
+    EntryView,
+    GameHeadView,
+  },
+};
 </script>
 
 <style scoped>
-  .entries {
-    padding-top: 57px;
-  }
+.entries {
+  padding-top: 57px;
+}
 </style>
