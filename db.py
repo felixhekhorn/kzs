@@ -3,8 +3,16 @@ import hashlib
 import os
 import pathlib
 
-from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String, Text,
-                        create_engine, func)
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    create_engine,
+    func,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -14,7 +22,7 @@ class MyBase:
 
     def as_dict(self):
         d = {}
-        for c in self.__table__.columns: # pylint: disable=no-member
+        for c in self.__table__.columns:  # pylint: disable=no-member
             if c.name == "password":
                 continue
             d[c.name] = getattr(self, c.name)

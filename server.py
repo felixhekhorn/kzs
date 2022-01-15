@@ -95,16 +95,17 @@ class App:
             "Entry": e.as_dict(),
             "next_player_user_id": game.nextPlayer().user_id,
         }
-        await self.tell_players(game, response)
-        return response
+        return await self.tell_players(game, response)
 
     async def tell_players(self, game, response):
         """Propagate the response to all players"""
         for player in game.players:
-            if player.user_id == self.user_id:
-                continue  # I'm via return
-            if player.user_id in CONNECTIONS:
-                await CONNECTIONS[player.user_id].send(json.dumps(response))
+            if player.user_id not in CONNECTIONS:
+                continue
+            # propagate to all devices
+            for con in CONNECTIONS[player.user_id]:
+                await con.send(json.dumps(response))
+        # deny response via return
 
     async def startGame(self):
         game_id = self.msg["game_id"]
@@ -125,8 +126,7 @@ class App:
             "type": "startedGame",
             "game_id": game.id,
         }
-        await self.tell_players(game, response)
-        return response
+        return await self.tell_players(game, response)
 
     async def endGame(self):
         game_id = self.msg["game_id"]
@@ -145,8 +145,7 @@ class App:
             "type": "endedGame",
             "game_id": game.id,
         }
-        await self.tell_players(game, response)
-        return response
+        return await self.tell_players(game, response)
 
     async def joinGame(self):
         game_slug = self.msg["game_slug"]
@@ -175,8 +174,7 @@ class App:
             "games": {game.id: game.serialize_json()},
             "users": {user_id: u.as_dict() for user_id, u in users.items()},
         }
-        await self.tell_players(game, response)
-        return response
+        return await self.tell_players(game, response)
 
     async def login(self):
         """Log a user in."""
@@ -198,14 +196,16 @@ class App:
         if not u:
             raise AppError("Unknown User!")
         # register user
-        CONNECTIONS[u.id] = self.websocket
+        if u.id not in CONNECTIONS:
+            CONNECTIONS[u.id] = set()
+        CONNECTIONS[u.id] |= {self.websocket}
         response = {"type": "loggedIn", "user": u.as_dict()}
         return response
 
     async def logout(self):
         """Log a user out."""
         # simply unregister
-        del CONNECTIONS[self.user_id]
+        CONNECTIONS[self.user_id] -= {self.websocket}
 
     async def registerUser(self):
         """Register a user via id."""
@@ -243,15 +243,23 @@ class App:
         """Parse a single message."""
         if "type" not in self.msg:
             raise AppError("Invalid request!")
-        if self.msg["type"] not in ["login", "newUser"]:
+        # identify user, if it is not a new one
+        has_user = self.msg["type"] not in ["login", "newUser"]
+        if has_user:
             if "user_id" not in self.msg:
                 raise AppError("Unknown User!")
             self.user_id = self.msg["user_id"]
+        # doit!
         try:
             f = self.__getattribute__(self.msg["type"])
         except AttributeError:
             raise AppError("Unknown type!")
-        return await f()
+        # propagate to all devices
+        response = await f()
+        if not has_user:
+            return response
+        for con in CONNECTIONS[self.user_id]:
+            await con.send(json.dumps(response))
 
 
 async def handler(websocket, _path):
@@ -281,7 +289,7 @@ async def main():
     loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
     port = int(os.environ.get("PORT", "8001"))
-    async with websockets.serve(handler, "", port): # pylint: disable=no-member
+    async with websockets.serve(handler, "", port):  # pylint: disable=no-member
         await stop
 
 

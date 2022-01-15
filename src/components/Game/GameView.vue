@@ -5,7 +5,7 @@
         <EntryView :entry="entry" :visible="visibles[entry.id]" />
       </div>
       <div v-if="canSend">
-        <q-input v-model="message" autogrow placeholder="und dann geschah etwas Seltsames:">
+        <q-input v-model="message" autogrow placeholder="setze hier die Geschichte fort: z.B. 'und dann geschah etwas Seltsames:'">
           <template v-slot:append>
             <q-btn @click="addEntry" round icon="send" />
           </template>
