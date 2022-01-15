@@ -29,6 +29,17 @@ class AppError(RuntimeError):
 CONNECTIONS = {}
 
 
+async def propagate(uid, response):
+    """Propagate to all connected devices."""
+    cons = CONNECTIONS[uid]
+    cons_alive = set()
+    for con in cons:
+        if con.open:
+            await con.send(json.dumps(response))
+            cons_alive.add(con)
+    CONNECTIONS[uid] = cons_alive
+
+
 class App:
     def __init__(self, websocket, msg):
         self.websocket = websocket
@@ -103,8 +114,7 @@ class App:
             if player.user_id not in CONNECTIONS:
                 continue
             # propagate to all devices
-            for con in CONNECTIONS[player.user_id]:
-                await con.send(json.dumps(response))
+            await propagate(player.user_id, response)
         # deny response via return
 
     async def startGame(self):
@@ -198,14 +208,15 @@ class App:
         # register user
         if u.id not in CONNECTIONS:
             CONNECTIONS[u.id] = set()
-        CONNECTIONS[u.id] |= {self.websocket}
+        CONNECTIONS[u.id].add(self.websocket)
         response = {"type": "loggedIn", "user": u.as_dict()}
+        self.user_id = u.id
         return response
 
     async def logout(self):
         """Log a user out."""
         # simply unregister
-        CONNECTIONS[self.user_id] -= {self.websocket}
+        CONNECTIONS[self.user_id].remove(self.websocket)
 
     async def registerUser(self):
         """Register a user via id."""
@@ -258,8 +269,7 @@ class App:
         response = await f()
         if not has_user:
             return response
-        for con in CONNECTIONS[self.user_id]:
-            await con.send(json.dumps(response))
+        await propagate(self.user_id, response)
 
 
 async def handler(websocket, _path):

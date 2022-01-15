@@ -13,56 +13,60 @@
           <component :is="currentComponent" />
         </div>
         <div v-else>
-          <q-banner rounded class="bg-red text-white">WebSocket-Server nicht verfügbar!</q-banner>
+          <q-banner rounded class="bg-red text-white"
+            >WebSocket-Server nicht verfügbar!</q-banner
+          >
         </div>
       </div>
     </q-page-container>
 
     <q-footer class="glossy text-center q-pa-sm items-center">
-      &copy; F. Hekhorn 2021-2022 <a target="_blank" href="https://github.com/felixhekhorn/kzs"><img
-          src="img/GitHub-Mark-32px.png" alt="GitHub" style="max-height:17px;vertical-align:text-bottom;" /></a>
+      &copy; F. Hekhorn 2021-2022
+      <a target="_blank" href="https://github.com/felixhekhorn/kzs"
+        ><img
+          src="img/GitHub-Mark-32px.png"
+          alt="GitHub"
+          style="max-height: 17px; vertical-align: text-bottom"
+      /></a>
+      v{{ version }}
     </q-footer>
   </q-layout>
 </template>
 
 <script>
-  import {
-    mapState
-  } from 'vuex'
+import { mapState } from "vuex";
 
-  import HeaderView from "./components/HeaderView.vue"
-  import ErrorView from "./components/ErrorView.vue"
-  import LoginView from "./components/LoginView.vue"
-  import ListView from "./components/List/ListView.vue"
-  import GameView from "./components/Game/GameView.vue"
+import HeaderView from "./components/HeaderView.vue";
+import ErrorView from "./components/ErrorView.vue";
+import LoginView from "./components/LoginView.vue";
+import ListView from "./components/List/ListView.vue";
+import GameView from "./components/Game/GameView.vue";
 
-  // https://github.com/AykutSarac/chatify
+// https://github.com/AykutSarac/chatify
 
-  export default {
-    computed: {
-      ...mapState([
-        "has_server", "state", "currentUser"
-      ]),
-      currentComponent() {
-        if (this.state == "showGame")
-          return GameView;
-        if (this.state == "listGames")
-          return ListView;
-        return LoginView;
-      }
+export default {
+  computed: {
+    ...mapState(["has_server", "state", "currentUser"]),
+    currentComponent() {
+      if (this.state == "showGame") return GameView;
+      if (this.state == "listGames") return ListView;
+      return LoginView;
     },
-    beforeCreate() {
-      this.$store.commit('readFromSession');
+    version() {
+      return process.env.VUE_APP_VERSION;
     },
-    created() {
-      this.$store.dispatch("open");
-    },
-    components: {
-      ErrorView,
-      HeaderView
-    }
-  }
+  },
+  beforeCreate() {
+    this.$store.commit("readFromSession");
+  },
+  created() {
+    this.$store.dispatch("open");
+  },
+  components: {
+    ErrorView,
+    HeaderView,
+  },
+};
 </script>
 
-<style>
-</style>
+<style></style>

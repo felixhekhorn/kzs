@@ -1,12 +1,12 @@
+process.env.VUE_APP_VERSION = require("./package.json").version;
+
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/kzs/' : '/',
+  publicPath: process.env.NODE_ENV === "production" ? "/kzs/" : "/",
   pluginOptions: {
     quasar: {
-      importStrategy: 'kebab',
-      rtlSupport: false
-    }
+      importStrategy: "kebab",
+      rtlSupport: false,
+    },
   },
-  transpileDependencies: [
-    'quasar'
-  ]
-}
+  transpileDependencies: ["quasar"],
+};
