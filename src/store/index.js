@@ -106,6 +106,10 @@ export default createStore({
         // register current User with the server
         if (Object.keys(state.currentUser).length) dispatch("registerUser");
       });
+      ws.addEventListener("close", () => {
+        commit("logout"); // not sure this is needed, but let's be safe ...
+        commit("setHasServer", false);
+      });
       commit("setConnection", ws);
     },
     async parse({ state, commit, dispatch }, res) {
@@ -124,7 +128,11 @@ export default createStore({
         res.type == "newGame"
       )
         return commit("setGames", res);
-      if (res.type == "addEntry") return commit("setEntry", res);
+      if (res.type == "addEntry") {
+        // reset last message
+        sessionStorage.setItem("lastEntryBody", "");
+        return commit("setEntry", res);
+      }
       if (res.type == "startedGame") {
         commit("startedGame", res);
         // open immediately for me, since I'm first

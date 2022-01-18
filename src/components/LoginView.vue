@@ -1,7 +1,5 @@
 <template>
-  <q-banner class="bg-red text-white q-mb-sm">
-    Das ist eine Alpha-Version!
-  </q-banner>
+  <q-banner class="bg-warning q-mb-sm"> Das ist eine Alpha-Version! </q-banner>
   <q-list bordered class="rounded-borders">
     <q-expansion-item
       group="login_type"

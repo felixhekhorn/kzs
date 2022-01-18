@@ -9,6 +9,7 @@
           v-model="message"
           autogrow
           placeholder="setze hier die Geschichte fort: z.B. 'und dann geschah etwas Seltsames:'"
+          @keyup="onKeyUp"
         >
           <template v-slot:append>
             <q-btn @click="addEntry" round icon="send" />
@@ -64,9 +65,20 @@ export default {
   methods: {
     addEntry() {
       this.message = this.message.trim();
-      if (this.message) this.$store.dispatch("addEntry", this.message);
+      if (this.message) {
+        sessionStorage.setItem("lastEntryBody", this.message);
+        this.$store.dispatch("addEntry", this.message);
+      }
       this.message = "";
     },
+    onKeyUp() {
+      sessionStorage.setItem("lastEntryBody", this.message.trim());
+    },
+  },
+  created() {
+    // restore last message in case the connection got lost
+    const lastMsg = sessionStorage.getItem("lastEntryBody");
+    if (lastMsg) this.message = lastMsg;
   },
   components: {
     EntryView,

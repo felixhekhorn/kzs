@@ -13,9 +13,12 @@
           <component :is="currentComponent" />
         </div>
         <div v-else>
-          <q-banner rounded class="bg-red text-white"
-            >WebSocket-Server nicht verfügbar!</q-banner
-          >
+          <q-banner inline-actions rounded class="bg-red text-white">
+            WebSocket-Server nicht verfügbar!
+            <template v-slot:action>
+              <q-btn label="Neu laden" icon="loop" @click="reload" />
+            </template>
+          </q-banner>
         </div>
       </div>
     </q-page-container>
@@ -54,6 +57,11 @@ export default {
     },
     version() {
       return process.env.VUE_APP_VERSION;
+    },
+  },
+  methods: {
+    reload() {
+      location.reload();
     },
   },
   beforeCreate() {

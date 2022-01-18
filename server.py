@@ -36,6 +36,9 @@ async def propagate(uid, response):
     for con in cons:
         if con.open:
             await con.send(json.dumps(response))
+        # connection might be opening/closing
+        # see https://websockets.readthedocs.io/en/stable/reference/server.html#websockets.server.WebSocketServerProtocol.closed
+        if not con.closed:
             cons_alive.add(con)
     CONNECTIONS[uid] = cons_alive
 
