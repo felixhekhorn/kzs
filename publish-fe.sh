@@ -1,5 +1,8 @@
 #!/usr/bin/env sh
 
+# get current hash
+c=$(git rev-parse --short HEAD)
+
 # abort on errors
 set -e
 
@@ -13,7 +16,7 @@ touch .nojekyll
 
 git init
 git add -A
-git commit -m 'Deploy'
+git commit -m "Deploy from $c"
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
 git push -f git@github.com:felixhekhorn/kzs.git master:gh-pages
