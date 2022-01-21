@@ -18,7 +18,7 @@
       </div>
     </div>
     <q-page-sticky expand position="top">
-      <q-list style="width: 100%" class="bg-white text-center">
+      <q-list class="gameHeadList bg-white text-center">
         <GameHeadView :game="game" mode="show" />
       </q-list>
     </q-page-sticky>
@@ -87,7 +87,14 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../styles/quasar.variables.scss";
+
+.gameHeadList {
+  width: 100%;
+  max-width: $layout-max-width;
+}
+
 .entries {
   padding-top: 57px;
 }

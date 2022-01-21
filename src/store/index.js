@@ -107,7 +107,6 @@ export default createStore({
         if (Object.keys(state.currentUser).length) dispatch("registerUser");
       });
       ws.addEventListener("close", () => {
-        commit("logout"); // not sure this is needed, but let's be safe ...
         commit("setHasServer", false);
       });
       commit("setConnection", ws);

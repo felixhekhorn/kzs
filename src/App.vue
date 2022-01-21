@@ -8,7 +8,7 @@
 
     <q-page-container>
       <div class="q-pa-md row justify-center">
-        <div v-if="has_server" style="width: 100%; max-width: 550px">
+        <div v-if="has_server" class="page">
           <ErrorView />
           <component :is="currentComponent" />
         </div>
@@ -77,4 +77,11 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped lang="scss">
+@import "styles/quasar.variables.scss";
+
+.page {
+  width: 100%;
+  max-width: $layout-max-width;
+}
+</style>
