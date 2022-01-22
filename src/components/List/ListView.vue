@@ -12,7 +12,7 @@
 import { mapState } from "vuex";
 import GameHeadView from "../GameHeadView.vue";
 import ListHead from "./ListHead.vue";
-import isObjectEmpty from "../../lib/isObjectEmpty.js";
+import isObjectEmpty from "../../utils/isObjectEmpty.js";
 
 export default {
   props: {},
