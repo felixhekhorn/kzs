@@ -2,6 +2,9 @@
   <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack" />
   <q-btn v-if="!hasBack" flat round dense icon="" class="invisible" />
   <q-toolbar-title>Knickzettelspiel</q-toolbar-title>
+  <div>
+    <a @click="setLocale('de')">de</a> | <a @click="setLocale('en')">en</a>
+  </div>
   <template v-if="hasLogout">
     <q-chip color="white">
       <q-icon flat round dense name="account_circle" />&nbsp;{{
@@ -35,6 +38,9 @@ export default {
         this.$store.dispatch("logout");
         return this.$store.commit("logout");
       }
+    },
+    setLocale(loc) {
+      this.$i18n.locale = loc;
     },
   },
 };

@@ -13,12 +13,7 @@
           <component :is="currentComponent" />
         </div>
         <div v-else>
-          <q-banner inline-actions rounded class="bg-red text-white">
-            WebSocket-Server nicht verfügbar!
-            <template v-slot:action>
-              <q-btn label="Neu laden" icon="loop" @click="reload" />
-            </template>
-          </q-banner>
+          <NoServerView />
         </div>
       </div>
     </q-page-container>
@@ -39,6 +34,7 @@
 <script>
 import { mapState } from "vuex";
 
+import NoServerView from "./components/Layout/NoServerView.vue";
 import HeaderView from "./components/HeaderView.vue";
 import ErrorView from "./components/ErrorView.vue";
 import LoginView from "./components/LoginView.vue";
@@ -49,7 +45,7 @@ import GameView from "./components/Game/GameView.vue";
 
 export default {
   computed: {
-    ...mapState(["has_server", "state", "currentUser"]),
+    ...mapState(["has_server", "state"]),
     currentComponent() {
       if (this.state == "showGame") return GameView;
       if (this.state == "listGames") return ListView;
@@ -57,11 +53,6 @@ export default {
     },
     version() {
       return process.env.VUE_APP_VERSION;
-    },
-  },
-  methods: {
-    reload() {
-      location.reload();
     },
   },
   beforeCreate() {
@@ -73,6 +64,7 @@ export default {
   components: {
     ErrorView,
     HeaderView,
+    NoServerView,
   },
 };
 </script>
