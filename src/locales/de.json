@@ -5,5 +5,18 @@
   "login": "Anmelden",
   "username": "Benutzername",
   "password": "Passwort",
-  "register": "Registrieren"
+  "register": "Registrieren",
+  "new": "Neu",
+  "join": "Beitreten",
+  "refresh": "Aktualisieren",
+  "gametitle": "Spieltitel",
+  "gameslug": "Spielkennung",
+  "really-start": "\"{title}\" wirklich starten?",
+  "cancel": "Abbrechen",
+  "start": "Starten",
+  "end": "Beenden",
+  "really-end": "\"{title}\" wirklich beenden?",
+  "logout": "Ausloggen",
+  "back": "Zurück",
+  "share": "Teilen"
 }

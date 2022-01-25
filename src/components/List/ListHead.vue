@@ -4,7 +4,7 @@
       <q-btn
         rounded
         icon="add"
-        label="Neu"
+        :label="$t('new')"
         :color="showingNew ? 'primary' : 'white'"
         :text-color="showingNew ? 'white' : 'black'"
         @click="onShowNew"
@@ -12,22 +12,25 @@
       <q-btn
         rounded
         icon="link"
-        label="Beitreten"
+        :label="$t('join')"
         :color="showingJoin ? 'primary' : 'white'"
         :text-color="showingJoin ? 'white' : 'black'"
         @click="onShowJoin"
       />
-      <q-btn rounded icon="refresh" label="Aktualisieren" @click="loadGames" />
+      <q-btn rounded icon="refresh" :label="$t('refresh')" @click="loadGames" />
     </q-btn-group>
     <div v-if="showingNew">
-      <q-input v-model="newTitle" placeholder="Spieltitel">
+      <q-input v-model="newTitle" :placeholder="$t('gametitle')">
+        <template v-slot:prepend>
+          <q-icon round name="title" />
+        </template>
         <template v-slot:append>
           <q-btn @click="onNewGame" round icon="send" />
         </template>
       </q-input>
     </div>
     <div v-if="showingJoin">
-      <q-input v-model="joinSlug" placeholder="Spielkennung">
+      <q-input v-model="joinSlug" :placeholder="$t('gameslug')">
         <template v-slot:prepend>
           <q-icon round name="key" />
         </template>

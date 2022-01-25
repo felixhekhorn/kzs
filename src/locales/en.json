@@ -5,5 +5,18 @@
   "login": "Login",
   "username": "user name",
   "password": "password",
-  "register": "Register"
+  "register": "Register",
+  "new": "New",
+  "join": "Join",
+  "refresh": "Refresh",
+  "gametitle": "game title",
+  "gameslug": "game key",
+  "really-start": "start really \"{title}\"?",
+  "cancel": "Cancel",
+  "start": "Start",
+  "end": "End",
+  "really-end": "end really \"{title}\"?",
+  "logout": "Logout",
+  "back": "Back",
+  "share": "Share"
 }

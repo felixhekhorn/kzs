@@ -2,7 +2,7 @@
   <q-banner inline-actions rounded class="bg-red text-white">
     {{ $t("no-server") }}
     <template v-slot:action>
-      <q-btn label="{{ $t('no-server') }}" icon="loop" @click="reload" />
+      <q-btn :label="$t('reload')" icon="loop" @click="reload" />
     </template>
   </q-banner>
 </template>

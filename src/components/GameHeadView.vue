@@ -11,20 +11,22 @@
         <q-icon name="event" />&nbsp;{{ ctime.format("DD.MM.YY HH:mm") }}
       </q-item-label>
     </q-item-section>
-    <!-- action items -->
+    <!-- start -->
     <template v-if="mode == 'list'">
       <q-item-section side top>
         <q-btn v-if="canStart" @click="onShowStart" round icon="start" />
         <q-dialog v-model="showStart">
           <q-card>
             <q-card-section class="row items-center">
-              <q-avatar icon="flag" color="primary" text-color="white" />
-              <span class="q-ml-sm">"{{ game.title }}" wirklich starten?</span>
+              <q-avatar icon="play_arrow" color="primary" text-color="white" />
+              <span class="q-ml-sm">{{
+                $t("really-start", { title: game.title })
+              }}</span>
             </q-card-section>
             <q-card-actions align="right">
-              <q-btn label="Abbrechen" color="primary" v-close-popup />
+              <q-btn :label="$t('cancel')" color="primary" v-close-popup />
               <q-btn
-                label="Starten"
+                :label="$t('start')"
                 color="primary"
                 @click="onStart"
                 v-close-popup
@@ -34,18 +36,21 @@
         </q-dialog>
       </q-item-section>
     </template>
+    <!-- end -->
     <q-item-section v-if="mode == 'show' && canEnd" side top>
       <q-btn @click="onShowEnd" round icon="flag" />
       <q-dialog v-model="showEnd">
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="flag" color="primary" text-color="white" />
-            <span class="q-ml-sm">"{{ game.title }}" wirklich beenden?</span>
+            <span class="q-ml-sm">{{
+              $t("really-end", { title: game.title })
+            }}</span>
           </q-card-section>
           <q-card-actions align="right">
-            <q-btn label="Abbrechen" color="primary" v-close-popup />
+            <q-btn :label="$t('cancel')" color="primary" v-close-popup />
             <q-btn
-              label="Beenden"
+              :label="$t('end')"
               color="primary"
               @click="onEnd"
               v-close-popup
@@ -54,8 +59,12 @@
         </q-card>
       </q-dialog>
     </q-item-section>
+    <!-- share -->
     <q-item-section v-if="canShare" side top>
       <q-btn @click.stop="" round icon="share">
+        <q-tooltip anchor="center left" self="center end">{{
+          $t("share")
+        }}</q-tooltip>
         <q-popup-proxy>
           <q-chip
             :label="game.slug"

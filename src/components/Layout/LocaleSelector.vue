@@ -4,8 +4,7 @@
       clickable
       :label="$i18n.locale"
       class="bg-white text-black"
-      anchor="bottom right"
-      self="top right"
+      icon="language"
     >
       <q-popup-proxy>
         <q-list>
@@ -35,6 +34,7 @@ export default {
   },
   methods: {
     setLocale(loc) {
+      sessionStorage.setItem("currentLocal", loc);
       this.$i18n.locale = loc;
     },
   },

@@ -17,14 +17,7 @@
     </q-page-container>
 
     <q-footer class="glossy text-center q-pa-sm items-center">
-      &copy; F. Hekhorn 2021-2022
-      <a target="_blank" href="https://github.com/felixhekhorn/kzs"
-        ><img
-          src="img/GitHub-Mark-32px.png"
-          alt="GitHub"
-          style="max-height: 17px; vertical-align: text-bottom"
-      /></a>
-      v{{ version }}
+      <FooterView />
     </q-footer>
   </q-layout>
 </template>
@@ -34,6 +27,7 @@ import { mapState } from "vuex";
 
 import NoServerView from "./components/Layout/NoServerView.vue";
 import HeaderView from "./components/Layout/HeaderView.vue";
+import FooterView from "./components/Layout/FooterView.vue";
 import ErrorView from "./components/ErrorView.vue";
 import LoginView from "./components/LoginView.vue";
 import ListView from "./components/List/ListView.vue";
@@ -49,12 +43,11 @@ export default {
       if (this.state == "listGames") return ListView;
       return LoginView;
     },
-    version() {
-      return process.env.VUE_APP_VERSION;
-    },
   },
   beforeCreate() {
     this.$store.commit("readFromSession");
+    const currentLocal = sessionStorage.getItem("currentLocal");
+    if (currentLocal) this.$i18n.locale = currentLocal;
   },
   created() {
     this.$store.dispatch("open");
@@ -63,6 +56,7 @@ export default {
     ErrorView,
     HeaderView,
     NoServerView,
+    FooterView,
   },
 };
 </script>

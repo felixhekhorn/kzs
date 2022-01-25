@@ -1,18 +1,22 @@
 <template>
   <q-toolbar>
-    <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack" />
-    <q-btn v-if="!hasBack" flat round dense icon="" class="invisible" />
+    <q-btn v-if="hasBack" flat round dense icon="arrow_back" @click="onBack">
+      <q-tooltip>
+        {{ $t("back") }}
+      </q-tooltip>
+    </q-btn>
     <q-toolbar-title>Knickzettelspiel</q-toolbar-title>
     <LocaleSelector />
     <template v-if="hasLogout">
-      <q-chip color="white">
-        <q-icon flat round dense name="account_circle" />&nbsp;{{
-          currentUser.name
-        }}
+      <q-chip color="white" icon="account_circle">
+        {{ currentUser.name }}
       </q-chip>
-      <q-btn flat round dense icon="logout" @click="onLogout" />
+      <q-btn flat round dense icon="logout" @click="onLogout">
+        <q-tooltip>
+          {{ $t("logout") }}
+        </q-tooltip>
+      </q-btn>
     </template>
-    <q-btn v-if="!hasLogout" flat round dense icon="" class="invisible" />
   </q-toolbar>
 </template>
 
