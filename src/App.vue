@@ -1,9 +1,7 @@
 <template>
   <q-layout view="lHh Lpr fFf">
     <q-header elevated class="glossy text-center">
-      <q-toolbar>
-        <HeaderView />
-      </q-toolbar>
+      <HeaderView />
     </q-header>
 
     <q-page-container>
@@ -35,7 +33,7 @@
 import { mapState } from "vuex";
 
 import NoServerView from "./components/Layout/NoServerView.vue";
-import HeaderView from "./components/HeaderView.vue";
+import HeaderView from "./components/Layout/HeaderView.vue";
 import ErrorView from "./components/ErrorView.vue";
 import LoginView from "./components/LoginView.vue";
 import ListView from "./components/List/ListView.vue";

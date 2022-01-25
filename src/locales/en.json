@@ -1,3 +1,9 @@
 {
-  "no-server": "WebSocket server not reachable!"
+  "no-server": "WebSocket server not reachable!",
+  "reload": "Reload",
+  "is-alpha": "This is an alpha version!",
+  "login": "Login",
+  "username": "user name",
+  "password": "password",
+  "register": "Register"
 }

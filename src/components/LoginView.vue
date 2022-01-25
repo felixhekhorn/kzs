@@ -1,16 +1,16 @@
 <template>
-  <q-banner class="bg-warning q-mb-sm"> Das ist eine Alpha-Version! </q-banner>
+  <q-banner class="bg-warning q-mb-sm"> {{ $t("is-alpha") }} </q-banner>
   <q-list bordered class="rounded-borders">
     <q-expansion-item
       group="login_type"
       expand-separator
       icon="account_circle"
-      label="Login"
+      :label="$t('login')"
       default-opened
     >
       <q-card>
         <q-card-section>
-          <q-input v-model="user_name" placeholder="Benutzername">
+          <q-input v-model="user_name" :placeholder="$t('username')">
             <template v-slot:prepend>
               <q-icon round name="account_circle" />
             </template>
@@ -18,7 +18,7 @@
           <q-input
             v-model="user_password"
             :type="showPassword ? 'password' : 'text'"
-            placeholder="Passwort"
+            :placeholder="$t('password')"
           >
             <template v-slot:prepend>
               <q-icon round name="password" />
@@ -32,7 +32,7 @@
           </q-input>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn @click="onLogin" icon-right="login">Anmelden</q-btn>
+          <q-btn @click="onLogin" icon-right="login">{{ $t("login") }}</q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
@@ -40,11 +40,11 @@
       group="login_type"
       expand-separator
       icon="person_add"
-      label="Registrieren"
+      :label="$t('register')"
     >
       <q-card>
         <q-card-section>
-          <q-input v-model="user_name" placeholder="Benutzername">
+          <q-input v-model="user_name" :placeholder="$t('username')">
             <template v-slot:prepend>
               <q-icon round name="account_circle" />
             </template>
@@ -52,7 +52,7 @@
           <q-input
             v-model="user_password_1"
             :type="showPassword1 ? 'password' : 'text'"
-            placeholder="Passwort"
+            :placeholder="$t('password')"
           >
             <template v-slot:prepend>
               <q-icon round name="password" />
@@ -67,7 +67,7 @@
           <q-input
             v-model="user_password_2"
             :type="showPassword2 ? 'password' : 'text'"
-            placeholder="Passwort"
+            :placeholder="$t('password')"
           >
             <template v-slot:prepend>
               <q-icon round name="password" />
@@ -81,7 +81,9 @@
           </q-input>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn icon-right="login" @click="onRegister">Registrieren</q-btn>
+          <q-btn icon-right="login" @click="onRegister">{{
+            $t("register")
+          }}</q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>

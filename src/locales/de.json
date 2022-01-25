@@ -1,3 +1,9 @@
 {
-  "no-server": "WebSocket-Server nicht verfügbar!"
+  "no-server": "WebSocket-Server nicht verfügbar!",
+  "reload": "Neu laden",
+  "is-alpha": "Das ist eine Alpha-Version!",
+  "login": "Anmelden",
+  "username": "Benutzername",
+  "password": "Passwort",
+  "register": "Registrieren"
 }
