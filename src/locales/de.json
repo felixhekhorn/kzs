@@ -11,12 +11,14 @@
   "refresh": "Aktualisieren",
   "gametitle": "Spieltitel",
   "gameslug": "Spielkennung",
-  "really-start": "\"{title}\" wirklich starten?",
+  "really-start": "\"{title}\" starten?",
   "cancel": "Abbrechen",
   "start": "Starten",
   "end": "Beenden",
-  "really-end": "\"{title}\" wirklich beenden?",
+  "really-end": "\"{title}\" beenden?",
   "logout": "Ausloggen",
   "back": "Zurück",
-  "share": "Teilen"
+  "share": "Teilen",
+  "placeholder-start": "Beginne die Geschichte, z.B. 'Es war einmal ...'",
+  "placeholder-continue": "Setze die Geschichte fort, z.B. 'und dann geschah etwas Seltsames:'"
 }

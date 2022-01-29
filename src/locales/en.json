@@ -11,12 +11,14 @@
   "refresh": "Refresh",
   "gametitle": "game title",
   "gameslug": "game key",
-  "really-start": "start really \"{title}\"?",
+  "really-start": "Start \"{title}\"?",
   "cancel": "Cancel",
   "start": "Start",
   "end": "End",
-  "really-end": "end really \"{title}\"?",
+  "really-end": "End \"{title}\"?",
   "logout": "Logout",
   "back": "Back",
-  "share": "Share"
+  "share": "Share",
+  "placeholder-start": "Begin the story, e.g, 'Once upon a time ...'",
+  "placeholder-continue": "Continue the story, e.g., 'and then happened something strange'"
 }

@@ -8,7 +8,7 @@
         <q-input
           v-model="message"
           autogrow
-          placeholder="setze hier die Geschichte fort: z.B. 'und dann geschah etwas Seltsames:'"
+          :placeholder="$t(inputPlaceholderKey)"
           @keyup="onKeyUp"
         >
           <template v-slot:append>
@@ -56,6 +56,10 @@ export default {
         this.game.next_player_user_id == this.currentUser.id &&
         this.game.state != "finished"
       );
+    },
+    inputPlaceholderKey() {
+      if (this.game.entries.length == 0) return "placeholder-start";
+      return "placeholder-continue";
     },
     game() {
       return this.games[this.currentGameId];
