@@ -3,16 +3,14 @@
     :name="users[entry.user_id].name"
     :text="body"
     v-bind="sent"
-    :stamp="ctime.format('DD.MM.YY HH:mm')"
+    :stamp="$d(ctime.toDate(), 'full')"
   />
 </template>
 
 <script>
 import { mapState } from "vuex";
 
-import dayjs from "dayjs";
-import "dayjs/locale/de";
-dayjs.locale("de");
+import dayjs from "../../utils/myDayJS";
 
 export default {
   props: {
@@ -21,7 +19,7 @@ export default {
   },
   computed: {
     ctime() {
-      return dayjs(this.entry.ctime);
+      return dayjs.utc(this.entry.ctime + "Z");
     },
     body() {
       return this.visible ? [this.entry.body] : ["..."];

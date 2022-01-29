@@ -25,6 +25,8 @@
 <script>
 import { mapState } from "vuex";
 
+import dayjs from "./utils/myDayJS";
+
 import NoServerView from "./components/Layout/NoServerView.vue";
 import HeaderView from "./components/Layout/HeaderView.vue";
 import FooterView from "./components/Layout/FooterView.vue";
@@ -47,7 +49,10 @@ export default {
   beforeCreate() {
     this.$store.commit("readFromSession");
     const currentLocal = sessionStorage.getItem("currentLocal");
-    if (currentLocal) this.$i18n.locale = currentLocal;
+    if (currentLocal) {
+      this.$i18n.locale = currentLocal;
+      dayjs.locale(currentLocal);
+    }
   },
   created() {
     this.$store.dispatch("open");

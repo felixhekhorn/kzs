@@ -1,5 +1,7 @@
 import { createI18n } from "vue-i18n";
 
+import datetimeFormats from "./utils/datetimeFormats.json";
+
 /**
  * Load locale messages
  *
@@ -29,4 +31,5 @@ export default createI18n({
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || "de",
   messages: loadLocaleMessages(),
   globalInjection: true,
+  datetimeFormats,
 });

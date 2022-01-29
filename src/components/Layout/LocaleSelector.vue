@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import dayjs from "../../utils/myDayJS";
+
 export default {
   computed: {
     otherLocales() {
@@ -36,6 +38,7 @@ export default {
     setLocale(loc) {
       sessionStorage.setItem("currentLocal", loc);
       this.$i18n.locale = loc;
+      dayjs.locale(loc);
     },
   },
 };

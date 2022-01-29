@@ -8,7 +8,7 @@
       <q-item-label caption lines="2">
         <PlayerList :game="game" />
         <q-icon name="article" />&nbsp;{{ game.entries.length }}
-        <q-icon name="event" />&nbsp;{{ ctime.format("DD.MM.YY HH:mm") }}
+        <q-icon name="event" />&nbsp;{{ $d(ctime.toDate(), ctimeFormat) }}
       </q-item-label>
     </q-item-section>
     <!-- start -->
@@ -82,9 +82,7 @@
 <script>
 import { mapState } from "vuex";
 
-import dayjs from "dayjs";
-import "dayjs/locale/de";
-dayjs.locale("de");
+import dayjs from "../utils/myDayJS";
 
 import PlayerList from "./PlayerList.vue";
 
@@ -101,7 +99,11 @@ export default {
   },
   computed: {
     ctime() {
-      return dayjs(this.game.ctime);
+      return dayjs.utc(this.game.ctime + "Z");
+    },
+    ctimeFormat() {
+      if (this.ctime.isToday()) return "time";
+      return "date";
     },
     avatar() {
       if (this.game.state == "running") return "play_arrow";
