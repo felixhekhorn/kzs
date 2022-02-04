@@ -7,12 +7,11 @@
       icon="language"
     >
       <q-popup-proxy>
-        <q-list>
+        <q-list v-close-popup>
           <q-item
             v-for="loc in otherLocales"
             :key="loc"
             clickable
-            v-close-popup
             @click="setLocale(loc)"
           >
             <q-item-section>
@@ -44,4 +43,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.q-list {
+  background: white;
+}
+</style>
