@@ -1,6 +1,21 @@
 import { createI18n } from "vue-i18n";
 
-import datetimeFormats from "./utils/datetimeFormats.json";
+const setDatetimeFormats = {
+  time: { minute: "2-digit", hour: "2-digit" },
+  date: { year: "2-digit", month: "2-digit", day: "2-digit" },
+  full: {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+    minute: "2-digit",
+    hour: "2-digit",
+  },
+};
+
+const datetimeFormats = {
+  de: setDatetimeFormats,
+  en: setDatetimeFormats,
+};
 
 /**
  * Load locale messages

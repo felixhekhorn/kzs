@@ -20,5 +20,6 @@
   "back": "Zurück",
   "share": "Teilen",
   "placeholder-start": "Beginne die Geschichte, z.B. 'Es war einmal ...'",
-  "placeholder-continue": "Setze die Geschichte fort, z.B. 'und dann geschah etwas Seltsames:'"
+  "placeholder-continue": "Setze die Geschichte fort, z.B. 'und dann geschah etwas Seltsames:'",
+  "connecting": "Verbine ... (versuche noch {time} s - starte vermutlich Server)"
 }

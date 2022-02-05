@@ -20,5 +20,6 @@
   "back": "Back",
   "share": "Share",
   "placeholder-start": "Begin the story, e.g, 'Once upon a time ...'",
-  "placeholder-continue": "Continue the story, e.g., 'and then happened something strange'"
+  "placeholder-continue": "Continue the story, e.g., 'and then happened something strange'",
+  "connecting": "Connecting ... (keep trying for {time} s - likely to start server)"
 }
