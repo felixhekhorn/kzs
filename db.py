@@ -62,6 +62,15 @@ class User(Base):
         return pwdhash == stored_password
 
 
+class Token(Base):
+    __tablename__ = "tokens"
+
+    slug = Column(String)
+    host = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    expire = Column(DateTime)
+
+
 class Game(Base):
     __tablename__ = "games"
 

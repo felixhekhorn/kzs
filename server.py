@@ -3,12 +3,13 @@ import json
 import os
 import secrets
 import signal
+from datetime import datetime, timedelta
 
 import websockets
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from db import Entry, Game, Player, User, engine
+from db import Entry, Game, Player, Token, User, engine
 
 # open connection
 uri = os.getenv("DATABASE_URL")
@@ -33,9 +34,10 @@ async def propagate(uid, response):
     """Propagate to all connected devices."""
     cons = CONNECTIONS[uid]
     cons_alive = set()
+    json_response = json.dumps(response)
     for con in cons:
         if con.open:
-            await con.send(json.dumps(response))
+            await con.send(json_response)
         # connection might be opening/closing
         # see https://websockets.readthedocs.io/en/stable/reference/server.html#websockets.server.WebSocketServerProtocol.closed
         if not con.closed:
@@ -48,6 +50,7 @@ class App:
         self.websocket = websocket
         self.msg = msg
         self.user_id = None
+        self.user_slug = None
 
     async def loadGames(self):
         """Load all relevant games."""
@@ -191,6 +194,7 @@ class App:
 
     async def login(self):
         """Log a user in."""
+        # search user
         u = (
             ses.query(User)
             .filter(
@@ -202,7 +206,24 @@ class App:
             raise AppError("Unknown User!")
         if not u.verify_password(self.msg["user_password"]):
             raise AppError("Wrong password!")
+        self.create_token(u.id)
         return await self.do_login(u)
+
+    def create_token(self, uid):
+        """Create a new User token (and delete old ones)"""
+        # clear expired tokens
+        now = datetime.now()
+        ses.query(Token).filter(Token.expire < now).delete()
+        # generate token
+        self.user_slug = secrets.token_urlsafe()
+        t = Token(
+            slug=self.user_slug,
+            host=self.websocket.remote_address[0],
+            user_id=uid,
+            expire=now + timedelta(hours=6),
+        )
+        ses.add(t)
+        ses.commit()
 
     async def do_login(self, u):
         """Register the user in the globale scope and give feedback."""
@@ -212,13 +233,18 @@ class App:
         if u.id not in CONNECTIONS:
             CONNECTIONS[u.id] = set()
         CONNECTIONS[u.id].add(self.websocket)
-        response = {"type": "loggedIn", "user": u.as_dict()}
+        user = u.as_dict()
+        user["slug"] = self.user_slug
+        response = {"type": "loggedIn", "user": user}
         self.user_id = u.id
         return response
 
     async def logout(self):
         """Log a user out."""
-        # simply unregister
+        # remove token
+        ses.query(Token).filter(Token.slug == self.user_slug).delete()
+        ses.commit()
+        # unregister
         CONNECTIONS[self.user_id].remove(self.websocket)
 
     async def registerUser(self):
@@ -251,7 +277,28 @@ class App:
         u = User(name=name, password=User.hash_password(pw))
         ses.add(u)
         ses.commit()
+        self.create_token(u.id)
         return await self.do_login(u)
+
+    def load_user(self):
+        """Identify user from token"""
+        if "user_slug" not in self.msg:
+            raise AppError("Unknown User!")
+        self.user_slug = self.msg["user_slug"]
+        t = (
+            ses.query(Token)
+            .filter(
+                Token.slug == self.user_slug,
+            )
+            .first()
+        )
+        if not t:
+            raise AppError("Invalid User token!")
+        if self.websocket.remote_address[0] != t.host:
+            raise AppError("Invalid IP address!")
+        if t.expire < datetime.now():
+            raise AppError("Login timed-out!")
+        self.user_id = t.user_id
 
     async def parse(self):
         """Parse a single message."""
@@ -260,10 +307,8 @@ class App:
         # identify user, if it is not a new one
         has_user = self.msg["type"] not in ["login", "newUser"]
         if has_user:
-            if "user_id" not in self.msg:
-                raise AppError("Unknown User!")
-            self.user_id = self.msg["user_id"]
-        # doit!
+            self.load_user()
+        # do it!
         try:
             f = self.__getattribute__(self.msg["type"])
         except AttributeError:
@@ -272,7 +317,8 @@ class App:
         response = await f()
         if not has_user:
             return response
-        await propagate(self.user_id, response)
+        if response:
+            await propagate(self.user_id, response)
 
 
 async def handler(websocket, _path):

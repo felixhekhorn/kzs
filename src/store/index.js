@@ -27,7 +27,13 @@ export default createStore({
     },
     setUser(state, msg) {
       state.currentUser = msg.user;
-      sessionStorage.setItem("currentUser.id", state.currentUser.id);
+      sessionStorage.setItem("currentUser.slug", state.currentUser.slug);
+      let users = {};
+      users[msg.user.id] = msg.user;
+      state.users = {
+        ...state.users,
+        ...users,
+      };
     },
     setGames(state, res) {
       state.games = {
@@ -65,13 +71,13 @@ export default createStore({
       state.currentUser = {};
       state.games = {};
       state.users = {};
-      sessionStorage.setItem("currentUser.id", "");
+      sessionStorage.setItem("currentUser.slug", "");
     },
     readFromSession(state) {
-      const currentUserId = sessionStorage.getItem("currentUser.id");
-      if (currentUserId) {
+      const currentUserSlug = sessionStorage.getItem("currentUser.slug");
+      if (currentUserSlug) {
         state.currentUser = {
-          id: currentUserId,
+          slug: currentUserSlug,
         };
       }
     },
@@ -98,7 +104,8 @@ export default createStore({
       ws.addEventListener("message", (event) => {
         //console.log('Message from server: ', event.data);
         const res = JSON.parse(event.data);
-        if (res.type) dispatch("parse", res);
+        if (res && res.type) dispatch("parse", res);
+        else console.debug("Could not parse message:", event, res);
       });
       // notify in browser
       ws.addEventListener("open", () => {
@@ -146,13 +153,13 @@ export default createStore({
     async loadGames({ state, dispatch }) {
       return await dispatch("send", {
         type: "loadGames",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
       });
     },
     async addEntry({ state, dispatch }, msg) {
       return await dispatch("send", {
         type: "addEntry",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
         game_id: state.currentGameId,
         body: msg,
       });
@@ -160,28 +167,28 @@ export default createStore({
     async startGame({ state, dispatch }, game_id) {
       return await dispatch("send", {
         type: "startGame",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
         game_id: game_id,
       });
     },
     async endGame({ state, dispatch }) {
       return await dispatch("send", {
         type: "endGame",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
         game_id: state.currentGameId,
       });
     },
     async joinGame({ state, dispatch }, slug) {
       return await dispatch("send", {
         type: "joinGame",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
         game_slug: slug,
       });
     },
     async newGame({ state, dispatch }, title) {
       return await dispatch("send", {
         type: "newGame",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
         game_title: title,
       });
     },
@@ -195,13 +202,13 @@ export default createStore({
     async logout({ state, dispatch }) {
       return await dispatch("send", {
         type: "logout",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
       });
     },
     async registerUser({ state, dispatch }) {
       return await dispatch("send", {
         type: "registerUser",
-        user_id: state.currentUser.id,
+        user_slug: state.currentUser.slug,
       });
     },
     async newUser({ dispatch }, data) {
